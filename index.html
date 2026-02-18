@@ -7,9 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <title>Ironman Architect 5.1</title>
-<link rel="shortcut icon" type="imagex/png" href="./img/logo-iron-man.ico">
-
+    <title>Ironman Architect 6.3 (Final)</title>
     <style>
         :root {
             --iron-red: #e10600;
@@ -28,6 +26,7 @@
             color: var(--iron-white);
             margin: 0; padding: 20px;
             min-height: 100vh;
+            padding-bottom: 80px;
         }
 
         .bg-overlay {
@@ -39,7 +38,7 @@
 
         .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* HEADER & COUNTDOWN */
+        /* HEADER */
         header { border-bottom: 2px solid var(--iron-gray); padding-bottom: 20px; margin-bottom: 20px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .brand h1 { margin: 0; font-style: italic; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
@@ -48,6 +47,7 @@
             background: rgba(0,0,0,0.6); border: 1px solid var(--iron-red);
             padding: 10px 20px; border-radius: 6px; text-align: center; margin-top: 15px;
             display: flex; justify-content: center; gap: 20px; font-family: 'Courier New', monospace;
+            cursor: pointer;
         }
         .count-item { display: flex; flex-direction: column; }
         .count-num { font-size: 1.5rem; font-weight: bold; color: var(--iron-white); }
@@ -60,7 +60,7 @@
         .btn-gear-icon:hover { transform: rotate(90deg); color: var(--iron-gold); }
         .btn-gear-icon svg { width: 24px; height: 24px; fill: currentColor; }
 
-        /* INPUTS & RPE */
+        /* INPUTS */
         .input-section {
             background: var(--iron-panel); padding: 20px; border-radius: 8px; margin-bottom: 30px;
             border: 1px solid #333; backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -86,7 +86,7 @@
         .progress-bg { background: #333; height: 6px; border-radius: 3px; margin-top: 15px; }
         .progress-fill { background: var(--iron-red); height: 100%; width: 0%; transition: 1s; }
 
-        /* FOOTER ICONS BAR */
+        /* FOOTER MENU */
         .footer-bar {
             margin-top: 40px; display: flex; justify-content: space-around; background: var(--iron-panel);
             padding: 15px; border-radius: 8px; border-top: 2px solid var(--iron-red);
@@ -104,26 +104,43 @@
         .modal-content { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid var(--iron-gray); max-width: 600px; width: 90%; box-shadow: 0 0 30px rgba(0,0,0, 0.8); position: relative; max-height: 90vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 15px; right: 20px; color: #888; cursor: pointer; font-size: 1.5rem; }
         
-        /* GEAR TRACKER STYLES */
+        /* ESTILOS ESPECÍFICOS DOS MÓDULOS */
         .gear-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #333; }
         .gear-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .gear-reset { background: #333; border: 1px solid #555; color: #ccc; font-size: 0.7rem; padding: 3px 8px; cursor: pointer; border-radius: 4px; }
         
-        /* NUTRITION STYLES */
         .nutrition-result { background: #222; padding: 15px; border-left: 3px solid var(--iron-gold); margin-top: 20px; display: none; }
         
-        /* PLAN GRID STYLES (RESTAURADO) */
-        .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .plan-item {
-            background: rgba(37, 37, 37, 0.8); padding: 15px; border-radius: 5px; border-left: 3px solid var(--iron-red);
-        }
+        /* COMPARISON STYLES */
+        .compare-toggle { display: flex; gap: 10px; margin-bottom: 20px; }
+        .toggle-btn { flex: 1; padding: 10px; border: 1px solid var(--iron-gray); background: transparent; color: #888; cursor: pointer; }
+        .toggle-btn.active { background: var(--iron-red); color: white; border-color: var(--iron-red); }
+        
+        .compare-row { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .compare-inputs { display: flex; gap: 5px; align-items: center; margin-top: 5px; }
+        .tiny-input { width: 60px; padding: 8px; background: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        
+        .compare-bar-container { height: 10px; background: #333; border-radius: 5px; margin-top: 10px; position: relative; }
+        .compare-bar-fill { height: 100%; background: var(--iron-gold); width: 0%; border-radius: 5px; transition: 1s; }
+        .compare-label { font-size: 0.75rem; color: #888; display: flex; justify-content: space-between; margin-top: 3px; }
+        
+        .tips-box { background: rgba(255, 206, 0, 0.1); padding: 15px; border-radius: 5px; margin-top: 10px; border-left: 2px solid var(--iron-gold); }
+        .tips-box h4 { margin: 0 0 5px 0; color: var(--iron-gold); font-size: 0.9rem; }
+        .tips-box p { font-size: 0.85rem; color: #ccc; margin: 0; line-height: 1.4; }
+
+        /* PLAN GRID (Detalhado) */
+        .plan-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        @media(min-width: 600px) { .plan-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .plan-item { background: rgba(37, 37, 37, 0.8); padding: 15px; border-radius: 5px; border-left: 3px solid var(--iron-red); }
         .plan-item h4 { margin: 0 0 5px 0; color: var(--iron-red); text-transform: uppercase; font-size: 0.85rem; }
-        .plan-item p { margin: 0; font-size: 0.9rem; color: #ddd; line-height: 1.4; }
+        .plan-item p { margin: 0; font-size: 0.9rem; color: #ddd; line-height: 1.4; white-space: pre-line; }
         .full-width { grid-column: 1 / -1; border-left: 3px solid var(--iron-gold); }
 
-        /* BACKUP BUTTONS */
         .btn-file-input { display: none; }
         .backup-row { display: flex; gap: 10px; margin-top: 20px; }
+        .report-table { width: 100%; border-collapse: collapse; }
+        .report-table td, .report-table th { padding: 8px; border-bottom: 1px solid #333; text-align: left; }
 
     </style>
 </head>
@@ -196,37 +213,18 @@
             <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M13,17H11V11H13V17M13,9H11V7H13V9Z"/></svg>
             Nutrição
         </button>
+        <button class="footer-btn" onclick="openModal('compareModal')">
+             <svg viewBox="0 0 24 24"><path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z"/></svg>
+            Reality
+        </button>
         <button class="footer-btn" onclick="openModal('gearModal')">
             <svg viewBox="0 0 24 24"><path d="M12,16A3,3 0 0,1 9,13C9,11.88 9.61,10.9 10.5,10.39L20.21,4.77L14.68,14.35C14.18,15.33 13.17,16 12,16M12,3C13.81,3 15.5,3.5 16.97,4.32L14.87,5.53C14,5.19 13,5 12,5A8,8 0 0,0 4,13C4,15.21 4.89,17.21 6.34,18.65H6.35C6.74,19.04 6.74,19.67 6.35,20.06C5.96,20.45 5.32,20.45 4.93,20.07V20.07C3.12,18.26 2,15.76 2,13A10,10 0 0,1 12,3M22,13C22,15.76 20.88,18.26 19.07,20.07V20.07C18.68,20.45 18.05,20.45 17.66,20.06C17.27,19.67 17.27,19.04 17.66,18.65V18.65C19.11,17.2 20,15.21 20,13C20,12 19.81,11 19.46,10.1L20.67,8C21.5,9.5 22,11.18 22,13Z"/></svg>
-            Equipamento
+            Equip.
         </button>
         <button class="footer-btn" onclick="generateReport()">
             <svg viewBox="0 0 24 24"><path d="M3.5,18.5L9.5,12.5L13.5,16.5L22,6.92L20.59,5.5L13.5,13.5L9.5,9.5L2,17L3.5,18.5Z"/></svg>
-            Relatório
+            Status
         </button>
-    </div>
-</div>
-
-<div class="modal-overlay" id="settingsModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
-        <h2 style="margin-top:0;">Configurações</h2>
-        
-        <label style="color:#888;">📅 Data da Prova:</label>
-        <input type="date" id="race-date-input" class="settings-input" onchange="saveRaceDate()" style="width:100%; padding:10px; margin:10px 0; background:#333; color:white; border:1px solid #555;">
-
-        <hr style="border:1px solid #333; margin:20px 0;">
-        
-        <h3 style="font-size:1rem; color:var(--iron-blue);">💾 Backup de Segurança</h3>
-        <p style="font-size:0.8rem; color:#888;">Baixe seus dados para não perder se limpar o celular.</p>
-        
-        <div class="backup-row">
-            <button class="btn-main" style="background:var(--iron-blue);" onclick="exportData()">⬇ Exportar Backup</button>
-            <label class="btn-main" style="background:var(--iron-gray); text-align:center; cursor:pointer;">
-                ⬆ Importar Backup
-                <input type="file" class="btn-file-input" id="backup-file" onchange="importData(this)">
-            </label>
-        </div>
     </div>
 </div>
 
@@ -240,7 +238,7 @@
             <input type="number" id="nutri-weight" placeholder="Seu Peso (kg)">
             <input type="number" id="nutri-hours" placeholder="Duração Treino (horas)">
         </div>
-        <button class="btn-main" onclick="calculateNutrition()">Calcular</button>
+        <button class="btn-main" onclick="calculateNutrition()">Calcular Necessidade</button>
         
         <div id="nutri-result" class="nutrition-result">
             <h4 style="margin:0; color:var(--iron-white);">Você precisa de:</h4>
@@ -251,33 +249,109 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="compareModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('compareModal')">&times;</span>
+        <h2 style="margin-top:0;">Reality Check 🎯</h2>
+        
+        <div class="compare-toggle">
+            <button class="toggle-btn active" id="btn-703" onclick="setCompareMode('70.3')">Ironman 70.3</button>
+            <button class="toggle-btn" id="btn-full" onclick="setCompareMode('Full')">Full Ironman</button>
+        </div>
+        
+        <p style="font-size:0.85rem; color:#666; font-style:italic; margin-bottom:20px;">Comparativo com Top 100/Alta Performance.</p>
+
+        <div class="compare-row">
+            <label style="color:var(--iron-blue);">🏊 Natação (Pace /100m)</label>
+            <div class="compare-inputs">
+                <input type="number" id="comp-swim-min" class="tiny-input" placeholder="min"> :
+                <input type="number" id="comp-swim-sec" class="tiny-input" placeholder="seg">
+            </div>
+            <div class="compare-bar-container"><div id="comp-bar-swim" class="compare-bar-fill"></div></div>
+            <div class="compare-label">
+                <span>Seu Pace: <strong id="pct-swim" style="color:var(--iron-white)">0%</strong></span>
+                <span id="target-swim">Alvo: 1:30/100m</span>
+            </div>
+            <div class="tips-box" id="tip-swim"></div>
+        </div>
+
+        <div class="compare-row">
+            <label style="color:var(--iron-red);">🚴 Ciclismo (Média km/h)</label>
+            <div class="compare-inputs">
+                <input type="number" id="comp-bike-kmh" class="tiny-input" placeholder="km/h" style="width:100px;">
+            </div>
+            <div class="compare-bar-container"><div id="comp-bar-bike" class="compare-bar-fill"></div></div>
+            <div class="compare-label">
+                <span>Sua Média: <strong id="pct-bike" style="color:var(--iron-white)">0%</strong></span>
+                <span id="target-bike">Alvo: 40 km/h</span>
+            </div>
+            <div class="tips-box" id="tip-bike"></div>
+        </div>
+
+        <div class="compare-row" style="border:none;">
+            <label style="color:var(--iron-green);">🏃 Corrida (Pace min/km)</label>
+            <div class="compare-inputs">
+                <input type="number" id="comp-run-min" class="tiny-input" placeholder="min"> :
+                <input type="number" id="comp-run-sec" class="tiny-input" placeholder="seg">
+            </div>
+            <div class="compare-bar-container"><div id="comp-bar-run" class="compare-bar-fill"></div></div>
+            <div class="compare-label">
+                <span>Seu Pace: <strong id="pct-run" style="color:var(--iron-white)">0%</strong></span>
+                <span id="target-run">Alvo: 3:45/km</span>
+            </div>
+            <div class="tips-box" id="tip-run"></div>
+        </div>
+        
+        <button class="btn-main" onclick="comparePerformance()">Analisar Performance</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
+        <h2 style="margin-top:0;">Configurações</h2>
+        
+        <label style="color:#888;">📅 Data da Prova:</label>
+        <input type="date" id="race-date-input" class="settings-input" onchange="saveRaceDate()" style="width:100%; padding:10px; margin:10px 0; background:#333; color:white; border:1px solid #555;">
+        
+        <hr style="border:1px solid #333; margin:20px 0;">
+        
+        <h3 style="font-size:1rem; color:var(--iron-blue);">💾 Backup de Segurança</h3>
+        <div class="backup-row">
+            <button class="btn-main" style="background:var(--iron-blue);" onclick="exportData()">⬇ Baixar Backup</button>
+            <label class="btn-main" style="background:var(--iron-gray); text-align:center; cursor:pointer;">
+                ⬆ Restaurar
+                <input type="file" class="btn-file-input" id="backup-file" onchange="importData(this)">
+            </label>
+        </div>
+
+        <hr style="border:1px solid #333; margin:20px 0;">
+        
+        <h3 style="font-size:1rem; color:var(--iron-red);">⚠ Zona de Perigo</h3>
+        <button class="btn-main" style="background:#333; border:1px solid var(--iron-red); color:var(--iron-red);" onclick="factoryReset()">
+            ☢️ APAGAR TUDO (Reset Geral)
+        </button>
+    </div>
+</div>
+
 <div class="modal-overlay" id="gearModal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('gearModal')">&times;</span>
-        <h2 style="color:var(--iron-red);">Garagem de Equipamentos 🔧</h2>
-        <p style="font-size:0.9rem; color:#888;">Evite lesões e falhas mecânicas.</p>
+        <h2 style="color:var(--iron-red);">Garagem 🔧</h2>
         
         <div class="gear-item">
-            <div class="gear-header">
-                <span>👟 Tênis de Corrida</span>
-                <button class="gear-reset" onclick="resetGear('shoes')">Trocar Tênis</button>
-            </div>
+            <div class="gear-header"><span>👟 Tênis</span><button class="gear-reset" onclick="resetGear('shoes')">Trocar</button></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span id="gear-shoes-val">0 km</span>
-                <span style="font-size:0.8rem; color:#666;">Limite: 800km</span>
+                <span id="gear-shoes-val">0 km</span><span style="font-size:0.8rem; color:#666;">Limite: 800km</span>
             </div>
             <div class="progress-bg"><div id="bar-shoes" class="progress-fill"></div></div>
-            <p id="alert-shoes" style="font-size:0.8rem; color:var(--iron-red); display:none; margin-top:5px;">⚠ LIMITE ATINGIDO! Considere trocar.</p>
+            <p id="alert-shoes" style="font-size:0.8rem; color:var(--iron-red); display:none; margin-top:5px;">⚠ LIMITE ATINGIDO!</p>
         </div>
 
         <div class="gear-item" style="border:none;">
-            <div class="gear-header">
-                <span>⛓️ Corrente Bike</span>
-                <button class="gear-reset" onclick="resetGear('chain')">Trocar Corrente</button>
-            </div>
+            <div class="gear-header"><span>⛓️ Corrente</span><button class="gear-reset" onclick="resetGear('chain')">Trocar</button></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span id="gear-chain-val">0 km</span>
-                <span style="font-size:0.8rem; color:#666;">Limite: 5000km</span>
+                <span id="gear-chain-val">0 km</span><span style="font-size:0.8rem; color:#666;">Limite: 5000km</span>
             </div>
             <div class="progress-bg"><div id="bar-chain" class="progress-fill"></div></div>
         </div>
@@ -287,9 +361,9 @@
 <div class="modal-overlay" id="planModal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('planModal')">&times;</span>
-        <h2 style="margin-top:0; color: var(--iron-white);">Briefing da Missão</h2>
-        <p style="color: var(--iron-red); font-weight: bold; text-transform: uppercase;" id="plan-phase-name"></p>
-        <p style="font-style: italic; color: #888; margin-bottom: 20px;" id="plan-objective"></p>
+        <h2 style="margin-top:0;">Plano Tático</h2>
+        <p id="plan-phase-name" style="color:var(--iron-red); font-weight:bold;"></p>
+        <p id="plan-objective" style="color:var(--iron-gold); font-style:italic; margin-bottom:20px;"></p>
         <div class="plan-grid" id="plan-container"></div>
     </div>
 </div>
@@ -298,7 +372,7 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('reportModal')">&times;</span>
         <h2 style="color:var(--iron-red);">Relatório de Cruzamento</h2>
-        <table class="report-table" style="width:100%; border-collapse:collapse;">
+        <table class="report-table">
             <tbody id="report-body"></tbody>
         </table>
         <div id="verdict-display" class="verdict" style="text-align:center; font-weight:bold; margin-top:20px;"></div>
@@ -307,118 +381,97 @@
 </div>
 
 <script>
-    // --- CONFIGURAÇÃO DETALHADA DAS FASES (RESTAURADA) ---
+    // --- CONFIGURAÇÃO ---
     const phasesConfig = [
         {
-            id: 1,
-            name: "Fase 1: Construção da Base (Mês 1-3)",
+            id: 1, name: "Fase 1: Construção da Base (Meses 1-3)",
             goals: { swim: 24000, bike: 600, run: 120 },
             plan: {
-                obj: "Sair do zero sem lesões. Foco em técnica e adaptação.",
-                swim: "2x semana | Foco técnico (respiração e economia).",
-                bike: "1-2x semana (40-60min) | Leve (Ergométrica ou Rua).",
-                run: "2-3x semana (30min) | Caminhada progredindo para Trote Leve.",
-                gym: "2x semana | Obrigatório: Perna, Core e Costas."
+                obj: "Sair do zero sem lesões.",
+                swim: "2x semana\nFoco: Aprender a respirar e economizar energia.",
+                bike: "1-2x semana (40-60min)\nLeve (Ergométrica ou Rua).",
+                run: "2-3x semana (30min)\nCaminhada -> Trote leve.",
+                gym: "2x semana\nObrigatório: Perna, Core, Costas."
             }
         },
         {
-            id: 2,
-            name: "Fase 2: Resistência Real (Mês 4-6)",
+            id: 2, name: "Fase 2: Resistência Real (Meses 4-6)",
             goals: { swim: 36000, bike: 1200, run: 300 },
             plan: {
-                obj: "Aumentar volume e resistência aeróbica.",
-                swim: "1.500m - 2.000m por sessão | Foco em volume.",
-                bike: "60-90min | Introduzir ritmo de cruzeiro.",
-                run: "5-8km confortáveis | 5x na semana (treino geral).",
-                gym: "Manutenção 2x semana | 1 Treino combinado leve (Bike + Corrida)."
+                obj: "Agora começa a ficar sério.",
+                swim: "1.500–2.000 m por sessão.",
+                bike: "60–90 min.",
+                run: "5–8 km confortáveis.",
+                gym: "1 treino combinado leve (bike + corrida curta)."
             }
         },
         {
-            id: 3,
-            name: "Fase 3: Volume Específico (Mês 7-9)",
+            id: 3, name: "Fase 3: Volume Específico (Meses 7-9)",
             goals: { swim: 45000, bike: 2000, run: 450 },
             plan: {
-                obj: "Simulação de prova e queima de gordura.",
-                swim: "2.500m - 3.000m | Séries longas.",
-                bike: "Longão: 2h30 a 4h | Alimentação na bike.",
-                run: "Longão: 12-18km | Ritmo de prova.",
-                gym: "1 Treino BRICK semanal (Bike + Corrida na sequência)."
+                obj: "Ironman de verdade. Resistência.",
+                swim: "2.500–3.000 m.",
+                bike: "Longão: 2h30–4h.",
+                run: "Longão: 12–18 km.",
+                gym: "1 treino 'brick' (bike + corrida na sequência)."
             }
         },
         {
-            id: 4,
-            name: "Fase 4: Polimento (Mês 10-12)",
+            id: 4, name: "Fase 4: Simulação e Polimento (Meses 10-12)",
             goals: { swim: 15000, bike: 400, run: 80 },
             plan: {
-                obj: "Simulação final e Taper (descanso estratégico).",
-                swim: "3.000m - 3.800m | Simulação completa.",
-                bike: "Simulação de 5h | Teste final de equipamento.",
-                run: "Simulação 25-30km | Foco mental.",
-                gym: "Redução drástica de volume nas últimas 3 semanas."
+                obj: "Jogo mental e Taper.",
+                swim: "3.000–3.800 m.",
+                bike: "Simulação 5h.",
+                run: "Simulação 25–30 km.",
+                gym: "Últimas 3 semanas: reduzir volume (taper)."
             }
         }
     ];
 
-    // Carregar Estado ou Iniciar Novo
     let appState = JSON.parse(localStorage.getItem('ironmanState')) || {
         phaseIndex: 0,
         data: { swim: 0, bike: 0, run: 0 },
         raceDate: null,
         gear: { shoes: 0, chain: 0 }
     };
-    
-    // Safety check para versões antigas
-    if(!appState.gear) appState.gear = { shoes: 0, chain: 0 };
+    if(!appState.gear) appState.gear = { shoes:0, chain:0 };
+    let currentCompareMode = '70.3';
 
     function init() {
-        updateUI();
-        startCountdown();
-        updateGearUI();
+        updateUI(); startCountdown(); updateGearUI();
         if(appState.raceDate) document.getElementById('race-date-input').value = appState.raceDate;
+        renderTips();
     }
 
-    // --- AÇÕES PRINCIPAIS ---
+    // --- FUNÇÕES PRINCIPAIS ---
     function updateRPEText(val) {
-        const labels = ["", "Muito Leve", "Leve", "Leve", "Moderado", "Moderado", "Forte", "Forte", "Muito Forte", "Exaustão", "Máxima"];
-        const colors = ["", "#0f8", "#0f8", "#0f8", "#fc0", "#fc0", "#f60", "#f60", "#f33", "#f00", "#f00"];
-        const el = document.getElementById('rpe-text');
-        el.innerText = `${labels[val]} (${val})`;
-        el.style.color = colors[val];
+        const labels = ["","Muito Leve","Leve","Leve","Moderado","Moderado","Forte","Forte","Muito Forte","Exaustão","Máxima"];
+        const colors = ["","#0f8","#0f8","#0f8","#fc0","#fc0","#f60","#f60","#f33","#f00","#f00"];
+        document.getElementById('rpe-text').innerText = `${labels[val]} (${val})`;
+        document.getElementById('rpe-text').style.color = colors[val];
     }
 
     function addTraining() {
-        const s = parseFloat(document.getElementById('in-swim').value) || 0;
-        const b = parseFloat(document.getElementById('in-bike').value) || 0;
-        const r = parseFloat(document.getElementById('in-run').value) || 0;
-
-        if (s===0 && b===0 && r===0) { alert("Insira uma distância."); return; }
-
-        appState.data.swim += s;
-        appState.data.bike += b;
-        appState.data.run += r;
-
-        appState.gear.shoes += r;
-        appState.gear.chain += b;
-
-        saveState();
-        updateUI();
-        updateGearUI();
-
-        document.getElementById('in-swim').value = '';
-        document.getElementById('in-bike').value = '';
-        document.getElementById('in-run').value = '';
-        alert("✅ Treino Registrado!");
+        const s=parseFloat(document.getElementById('in-swim').value)||0, b=parseFloat(document.getElementById('in-bike').value)||0, r=parseFloat(document.getElementById('in-run').value)||0;
+        if(s===0 && b===0 && r===0) { alert("Preencha algo!"); return; }
+        
+        appState.data.swim+=s; appState.data.bike+=b; appState.data.run+=r;
+        appState.gear.shoes+=r; appState.gear.chain+=b;
+        
+        saveState(); updateUI(); updateGearUI();
+        
+        document.getElementById('in-swim').value=''; document.getElementById('in-bike').value=''; document.getElementById('in-run').value='';
+        alert("✅ Treino Salvo!");
     }
 
     function saveState() { localStorage.setItem('ironmanState', JSON.stringify(appState)); }
-
+    
     function updateUI() {
         const p = phasesConfig[appState.phaseIndex];
         document.getElementById('phase-badge').innerText = p.name.split(':')[0];
-        
         ['swim','bike','run'].forEach(mode => {
-            const val = appState.data[mode];
-            const goal = p.goals[mode];
+            const val = appState.data[mode], goal = p.goals[mode];
             document.getElementById(`val-${mode}`).innerText = val;
             document.getElementById(`goal-${mode}`).innerText = goal;
             const pct = Math.min((val/goal)*100, 100);
@@ -428,42 +481,21 @@
         });
     }
 
-    // --- GEAR TRACKER ---
-    function updateGearUI() {
-        const shoesLimit = 800;
-        const chainLimit = 5000;
-        
-        const sPct = Math.min((appState.gear.shoes / shoesLimit) * 100, 100);
-        document.getElementById('gear-shoes-val').innerText = appState.gear.shoes.toFixed(1) + " km";
-        const sBar = document.getElementById('bar-shoes');
-        sBar.style.width = sPct + '%';
-        sBar.style.background = sPct > 90 ? 'var(--iron-red)' : (sPct > 70 ? 'var(--iron-gold)' : 'var(--iron-green)');
-        document.getElementById('alert-shoes').style.display = sPct >= 100 ? 'block' : 'none';
-
-        const cPct = Math.min((appState.gear.chain / chainLimit) * 100, 100);
-        document.getElementById('gear-chain-val').innerText = appState.gear.chain.toFixed(1) + " km";
-        const cBar = document.getElementById('bar-chain');
-        cBar.style.width = cPct + '%';
-        cBar.style.background = cPct > 90 ? 'var(--iron-red)' : 'var(--iron-green)';
-    }
-
-    function resetGear(type) {
-        if(confirm(`Você comprou um novo item (${type})? Isso irá zerar o contador.`)) {
-            appState.gear[type] = 0;
-            saveState();
-            updateGearUI();
+    // --- RESET / LIMPAR TUDO ---
+    function factoryReset() {
+        if(confirm("TEM CERTEZA? Isso apagará TODO o seu histórico, datas e equipamentos. Não há como desfazer.")) {
+            localStorage.removeItem('ironmanState');
+            location.reload(); 
         }
     }
 
-    // --- NUTRITION ---
+    // --- NUTRIÇÃO ---
     function calculateNutrition() {
         const w = parseFloat(document.getElementById('nutri-weight').value);
         const h = parseFloat(document.getElementById('nutri-hours').value);
+        if(!w || !h) { alert("Preencha os campos."); return; }
         
-        if(!w || !h) { alert("Preencha peso e horas."); return; }
-
-        const carbsPerHour = 60; 
-        const totalCarbs = Math.round(carbsPerHour * h);
+        const totalCarbs = Math.round(60 * h); // Regra conservadora 60g/h
         const gels = Math.floor(totalCarbs / 22);
         const bottles = Math.round((totalCarbs % 22) / 30);
         
@@ -476,92 +508,126 @@
         `;
     }
 
-    // --- BACKUP ---
+    // --- COMPARISON ---
+    function setCompareMode(mode) {
+        currentCompareMode = mode;
+        document.getElementById('btn-703').className = mode === '70.3' ? 'toggle-btn active' : 'toggle-btn';
+        document.getElementById('btn-full').className = mode === 'Full' ? 'toggle-btn active' : 'toggle-btn';
+        
+        if(mode === '70.3') {
+            document.getElementById('target-swim').innerText = "Alvo: 1:30/100m";
+            document.getElementById('target-bike').innerText = "Alvo: 40 km/h";
+            document.getElementById('target-run').innerText = "Alvo: 3:45/km";
+        } else {
+            document.getElementById('target-swim').innerText = "Alvo: 1:35/100m";
+            document.getElementById('target-bike').innerText = "Alvo: 36 km/h";
+            document.getElementById('target-run').innerText = "Alvo: 4:30/km";
+        }
+        renderTips();
+    }
+    
+    function comparePerformance() {
+        let tSwim = 90, tBike = 40, tRun = 225;
+        if(currentCompareMode === 'Full') { tSwim = 95; tBike = 36; tRun = 270; }
+
+        const uSwim = (parseFloat(document.getElementById('comp-swim-min').value)||0)*60 + (parseFloat(document.getElementById('comp-swim-sec').value)||0);
+        const uBike = parseFloat(document.getElementById('comp-bike-kmh').value)||0;
+        const uRun = (parseFloat(document.getElementById('comp-run-min').value)||0)*60 + (parseFloat(document.getElementById('comp-run-sec').value)||0);
+
+        let swimPct = 0;
+        if(uSwim > 0) {
+            swimPct = (tSwim / uSwim) * 100;
+            document.getElementById('comp-bar-swim').style.width = Math.min(swimPct, 100) + '%';
+            updatePctText('pct-swim', swimPct);
+        }
+        
+        let bikePct = 0;
+        if(uBike > 0) {
+            bikePct = (uBike / tBike) * 100;
+            document.getElementById('comp-bar-bike').style.width = Math.min(bikePct, 100) + '%';
+            updatePctText('pct-bike', bikePct);
+        }
+
+        let runPct = 0;
+        if(uRun > 0) {
+            runPct = (tRun / uRun) * 100;
+            document.getElementById('comp-bar-run').style.width = Math.min(runPct, 100) + '%';
+            updatePctText('pct-run', runPct);
+        }
+    }
+
+    function updatePctText(id, val) {
+        const el = document.getElementById(id);
+        el.innerText = val.toFixed(0) + "%";
+        if(val >= 100) el.style.color = "var(--iron-green)";
+        else if(val >= 80) el.style.color = "var(--iron-gold)";
+        else el.style.color = "var(--iron-red)";
+    }
+
+    function renderTips() {
+        document.getElementById('tip-swim').innerHTML = `<h4>💡 Fato</h4><p>Técnica > Força. Se nada travado, nem roupa de R$5.000 te salva. Alvo Top 100: Pace 1:20-1:35/100m.</p>`;
+        document.getElementById('tip-bike').innerHTML = `<h4>💡 Fato</h4><p>Bike de estrada com clip resolve. Erro clássico: roda de carbono sem ter perna. Alvo Top 100: Média 38-42km/h.</p>`;
+        document.getElementById('tip-run').innerHTML = `<h4>💡 Fato</h4><p>Correr depois da bike é correr com perna "cimentada". Alvo Top 100: Meia maratona entre 1h15 e 1h25.</p>`;
+    }
+
+    // --- GEAR, BACKUP & MODALS ---
+    function updateGearUI() {
+        const sPct = Math.min((appState.gear.shoes/800)*100, 100);
+        document.getElementById('gear-shoes-val').innerText = appState.gear.shoes.toFixed(1)+" km";
+        document.getElementById('bar-shoes').style.width = sPct + '%';
+        document.getElementById('alert-shoes').style.display = sPct>=100 ? 'block':'none';
+        
+        const cPct = Math.min((appState.gear.chain/5000)*100, 100);
+        document.getElementById('gear-chain-val').innerText = appState.gear.chain.toFixed(1)+" km";
+        document.getElementById('bar-chain').style.width = cPct + '%';
+    }
+    function resetGear(t) { if(confirm("Zerando contador...")) { appState.gear[t]=0; saveState(); updateGearUI(); } }
+    
     function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "ironman-backup-" + new Date().toISOString().slice(0,10) + ".json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        const a = document.createElement('a');
+        a.href = "data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(appState));
+        a.download = "ironman-backup.json"; a.click();
+    }
+    function importData(i) {
+        const r = new FileReader();
+        r.onload = e => { if(confirm("Restaurar?")) { appState=JSON.parse(e.target.result); saveState(); init(); alert("Feito!"); closeModal('settingsModal'); }};
+        if(i.files[0]) r.readAsText(i.files[0]);
     }
 
-    function importData(input) {
-        const file = input.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if(confirm("Isso substituirá seus dados atuais. Confirmar?")) {
-                    appState = imported;
-                    if(!appState.gear) appState.gear = { shoes:0, chain:0 };
-                    saveState();
-                    init();
-                    alert("Backup restaurado com sucesso!");
-                    closeModal('settingsModal');
-                }
-            } catch(err) { alert("Erro ao ler arquivo."); }
-        };
-        reader.readAsText(file);
-    }
-
-    // --- HELPERS E MODAIS ---
-    function openModal(id) { 
-        if(id === 'planModal') {
-            const phase = phasesConfig[appState.phaseIndex];
-            document.getElementById('plan-phase-name').innerText = phase.name;
-            document.getElementById('plan-objective').innerText = "Objetivo: " + phase.plan.obj;
+    function openModal(id) {
+        if(id==='planModal') {
+            const p = phasesConfig[appState.phaseIndex];
+            document.getElementById('plan-phase-name').innerText = p.name;
+            document.getElementById('plan-objective').innerText = p.plan.obj;
             document.getElementById('plan-container').innerHTML = `
-                <div class="plan-item"><h4>🏊 Natação</h4><p>${phase.plan.swim}</p></div>
-                <div class="plan-item"><h4>🚴 Ciclismo</h4><p>${phase.plan.bike}</p></div>
-                <div class="plan-item"><h4>🏃 Corrida</h4><p>${phase.plan.run}</p></div>
-                <div class="plan-item full-width"><h4>🏋️ Musculação / Extra</h4><p>${phase.plan.gym}</p></div>
+                <div class="plan-item"><h4>🏊 Natação</h4><p>${p.plan.swim}</p></div>
+                <div class="plan-item"><h4>🚴 Ciclismo</h4><p>${p.plan.bike}</p></div>
+                <div class="plan-item"><h4>🏃 Corrida</h4><p>${p.plan.run}</p></div>
+                <div class="plan-item full-width"><h4>🏋️ Força / Extra</h4><p>${p.plan.gym}</p></div>
             `;
         }
-        document.getElementById(id).style.display = 'flex'; 
+        document.getElementById(id).style.display='flex';
     }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function saveRaceDate() { appState.raceDate = document.getElementById('race-date-input').value; saveState(); startCountdown(); }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    function saveRaceDate() { appState.raceDate=document.getElementById('race-date-input').value; saveState(); startCountdown(); }
     function startCountdown() {
         if(!appState.raceDate) return;
-        const disp = document.getElementById('countdown-display');
-        setInterval(() => {
-            const diff = new Date(appState.raceDate) - new Date();
-            if(diff < 0) { disp.innerHTML = "IRONMAN DAY!"; return; }
-            const d = Math.floor(diff/(1000*60*60*24));
-            disp.innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS PARA A GLÓRIA</span>`;
-        }, 1000);
+        const d = Math.floor((new Date(appState.raceDate)-new Date())/(1000*60*60*24));
+        document.getElementById('countdown-display').innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS</span>`;
     }
 
     function generateReport() {
         openModal('reportModal');
         const p = phasesConfig[appState.phaseIndex];
-        const rows = ['swim','bike','run'].map(k => {
-            const pct = (appState.data[k] / p.goals[k]) * 100;
-            return `<tr><td>${k.toUpperCase()}</td><td>${appState.data[k]}</td><td>${pct.toFixed(0)}%</td></tr>`;
-        }).join('');
-        document.getElementById('report-body').innerHTML = rows;
-        
-        const totalPct = (appState.data.swim/p.goals.swim + appState.data.bike/p.goals.bike + appState.data.run/p.goals.run)/3;
-        const pass = totalPct >= 0.8;
+        document.getElementById('report-body').innerHTML = ['swim','bike','run'].map(k=>`<tr><td>${k.toUpperCase()}</td><td>${appState.data[k]}</td><td>${((appState.data[k]/p.goals[k])*100).toFixed(0)}%</td></tr>`).join('');
+        const pass = (appState.data.swim/p.goals.swim + appState.data.bike/p.goals.bike + appState.data.run/p.goals.run)/3 >= 0.8;
         document.getElementById('verdict-display').innerText = pass ? "APROVADO ✅" : "PENDENTE ⏳";
-        document.getElementById('verdict-display').style.color = pass ? "var(--iron-green)" : "var(--iron-red)";
         document.getElementById('btn-advance').style.display = pass ? "block" : "none";
     }
-    
-    function advancePhase() {
-        if(appState.phaseIndex < 3) {
-            appState.phaseIndex++;
-            appState.data = { swim:0, bike:0, run:0 };
-            saveState(); init(); closeModal('reportModal');
-        } else { alert("Você completou o ciclo!"); }
-    }
+    function advancePhase() { if(appState.phaseIndex<3) { appState.phaseIndex++; appState.data={swim:0,bike:0,run:0}; saveState(); init(); closeModal('reportModal'); } else alert("Fim!"); }
 
     init();
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
-
 </body>
 </html>
