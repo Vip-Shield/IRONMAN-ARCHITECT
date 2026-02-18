@@ -816,7 +816,7 @@
     function startCountdown() {
         if(!appState.raceDate) return;
         const d = Math.floor((new Date(appState.raceDate)-new Date())/(1000*60*60*24));
-        document.getElementById('countdown-display').innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS</span>`;
+        document.getElementById('countdown-display').innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS PARA A GLÓRIA</span>`;
     }
 
     function generateReport() {
