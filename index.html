@@ -9,11 +9,11 @@
     
     <title>Ironman Architect - Champion</title>
 <link rel="shortcut icon" type="imagex/png" href="./img/logo-iron-man.ico">
+
     <style>
         :root {
             --iron-red: #e10600;
             --iron-dark: #0f0f0f;
-            /* Tornando os painéis ligeiramente transparentes para ver o fundo */
             --iron-panel: rgba(26, 26, 26, 0.9); 
             --iron-white: #ffffff;
             --iron-gray: #444;
@@ -30,78 +30,55 @@
             min-height: 100vh;
         }
 
-        /* --- NOVO: FUNDO DESFOCADO --- */
         .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            /* Imagem dinâmica de triatlo do Unsplash */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            /* Certifique-se que a imagem existe na pasta img ou altere o caminho */
             background-image: url('./img/iron_man.jpg');
-            background-size: cover;
-            background-position: center;
-            /* Aplica o desfoque e escurece a imagem */
-            filter: blur(8px) brightness(0.4);
-            transform: scale(1.1); /* Evita bordas brancas pelo desfoque */
+            background-size: cover; background-position: center;
+            filter: blur(8px) brightness(0.4); transform: scale(1.1);
         }
 
         .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
 
         /* HEADER & FASE */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--iron-gray);
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--iron-gray); padding-bottom: 20px; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 15px;
         }
         
         .brand h1 { margin: 0; font-style: italic; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         
-        .header-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
 
         .phase-badge {
-            background: var(--iron-red);
-            padding: 5px 15px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase;
+            background: var(--iron-red); padding: 5px 15px; border-radius: 4px;
+            font-weight: bold; font-size: 0.9rem; text-transform: uppercase;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
         .btn-plan {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--iron-white);
-            color: var(--iron-white);
-            padding: 5px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            transition: 0.3s;
-             backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.1); border: 1px solid var(--iron-white);
+            color: var(--iron-white); padding: 5px 15px; border-radius: 4px;
+            cursor: pointer; font-size: 0.8rem; text-transform: uppercase;
+            transition: 0.3s; backdrop-filter: blur(5px);
         }
         .btn-plan:hover { background: var(--iron-white); color: var(--iron-black); }
 
+        /* NOVO: BOTÃO DE ENGRENAGEM */
+        .btn-gear {
+            background: transparent; border: none; color: var(--iron-white);
+            cursor: pointer; padding: 5px; display: flex; align-items: center;
+            transition: transform 0.3s;
+        }
+        .btn-gear:hover { transform: rotate(90deg); color: var(--iron-gold); }
+        .btn-gear svg { width: 24px; height: 24px; fill: currentColor; }
+
         /* INPUTS */
         .input-section {
-            background: var(--iron-panel);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border: 1px solid #333;
-            backdrop-filter: blur(10px); /* Efeito vidro */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: var(--iron-panel); padding: 20px; border-radius: 8px;
+            margin-bottom: 30px; border: 1px solid #333;
+            backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         .input-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
         input {
@@ -112,8 +89,7 @@
             background: var(--iron-red); color: white; border: none;
             padding: 12px 25px; border-radius: 4px; cursor: pointer;
             font-weight: bold; text-transform: uppercase; width: 100%;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
+            transition: 0.2s; box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
         }
         .btn-main:hover { background: #b30500; }
 
@@ -123,8 +99,7 @@
             background: var(--iron-panel); padding: 20px;
             border-radius: 8px; border: 1px solid #333;
             position: relative; overflow: hidden;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         .card h3 { margin: 0; font-size: 0.8rem; color: #888; text-transform: uppercase; }
         .value-display { font-size: 2.2rem; font-weight: bold; margin: 10px 0; }
@@ -143,8 +118,7 @@
         .modal-content {
             background: var(--iron-panel); padding: 30px; border-radius: 8px;
             border: 1px solid var(--iron-gray); max-width: 600px; width: 90%;
-            box-shadow: 0 0 30px rgba(0,0,0, 0.8);
-            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0, 0.8); position: relative;
         }
         .close-btn {
             position: absolute; top: 15px; right: 20px;
@@ -152,9 +126,7 @@
         }
 
         /* ESTILO DO PLANO TÁTICO */
-        .plan-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;
-        }
+        .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .plan-item {
             background: rgba(37, 37, 37, 0.8); padding: 15px; border-radius: 5px; border-left: 3px solid var(--iron-red);
         }
@@ -179,6 +151,13 @@
         .verdict { font-size: 1.2rem; font-weight: bold; text-align: center; margin: 20px 0; }
         .verdict.aprovado { color: var(--iron-green); }
 
+        /* NOVO: BOTÕES DO MODAL DE CONFIGURAÇÃO */
+        .settings-buttons { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        .btn-save-manual { background-color: var(--iron-green); color: var(--iron-dark); }
+        .btn-save-manual:hover { background-color: #00cc6a; }
+        .btn-load-manual { background-color: var(--iron-gold); color: var(--iron-dark); }
+        .btn-load-manual:hover { background-color: #e6b800; }
+
     </style>
 </head>
 <body>
@@ -192,6 +171,11 @@
         </div>
         <div class="header-controls">
             <button class="btn-plan" onclick="openPlan()">📋 Ver Plano Tático</button>
+            
+            <button class="btn-gear" onclick="openSettings()" aria-label="Configurações">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+            </button>
+
             <div class="phase-badge" id="phase-badge">Fase 1</div>
         </div>
     </header>
@@ -239,8 +223,7 @@
         <p style="color: var(--iron-red); font-weight: bold; text-transform: uppercase;" id="plan-phase-name"></p>
         <p style="font-style: italic; color: #888; margin-bottom: 20px;" id="plan-objective"></p>
         
-        <div class="plan-grid" id="plan-container">
-            </div>
+        <div class="plan-grid" id="plan-container"></div>
     </div>
 </div>
 
@@ -248,18 +231,34 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeReport()">&times;</span>
         <h2 style="margin-top:0; color: var(--iron-red);">Relatório de Cruzamento</h2>
-        
         <table class="report-table">
             <thead><tr><th>Disciplina</th><th>Realizado</th><th>Meta</th><th>%</th></tr></thead>
             <tbody id="report-body"></tbody>
         </table>
-
         <div id="verdict-display" class="verdict"></div>
         <p id="verdict-msg" style="text-align: center; font-size: 0.9rem; color: #ccc;"></p>
-
         <button class="btn-main" onclick="advancePhase()" id="btn-advance" style="display:none; margin-top:15px;">Avançar Fase</button>
     </div>
 </div>
+
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSettings()">&times;</span>
+        <h2 style="margin-top:0; color: var(--iron-white);">Controle de Dados</h2>
+        <p style="color: #ccc;">O aplicativo salva automaticamente, mas você pode forçar ações manuais aqui.</p>
+        
+        <div class="settings-buttons">
+            <button class="btn-main btn-save-manual" onclick="manualSave()">
+                💾 Salvar Dados Agora
+            </button>
+            <button class="btn-main btn-load-manual" onclick="manualLoad()">
+                🔄 Recarregar Último Salve
+            </button>
+        </div>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 20px;">*Útil se você trocou de dispositivo recentemente ou se os dados parecerem desatualizados.</p>
+    </div>
+</div>
+
 
 <script>
     // --- CONFIGURAÇÃO DETALHADA DAS FASES ---
@@ -338,8 +337,14 @@
         document.getElementById('in-run').value = '';
     }
 
+    // Função principal de salvar (automática)
     function saveState() {
-        localStorage.setItem('ironmanState', JSON.stringify(appState));
+        try {
+            localStorage.setItem('ironmanState', JSON.stringify(appState));
+        } catch (e) {
+            alert("Erro crítico: Não foi possível salvar no armazenamento local. O dispositivo pode estar sem memória.");
+            console.error("Erro ao salvar:", e);
+        }
     }
 
     function updateUI() {
@@ -367,7 +372,7 @@
         bar.style.background = pct >= 100 ? 'var(--iron-green)' : 'var(--iron-red)';
     }
 
-    // --- LÓGICA DO PLANO TÁTICO ---
+    // --- LÓGICA DOS MODAIS (Plano, Relatório e Configurações) ---
     function openPlan() {
         const phase = phasesConfig[appState.phaseIndex];
         document.getElementById('plan-phase-name').innerText = phase.name;
@@ -384,8 +389,31 @@
         document.getElementById('planModal').style.display = 'flex';
     }
 
-    function closePlan() {
-        document.getElementById('planModal').style.display = 'none';
+    function closePlan() { document.getElementById('planModal').style.display = 'none'; }
+
+    // NOVO: Funções do Modal de Configurações (Engrenagem)
+    function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
+    function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+
+    // NOVO: Funções Manuais de Salvar/Carregar
+    function manualSave() {
+        saveState(); // Usa a mesma lógica do salvamento automático
+        alert("✅ Dados salvos manualmente com sucesso!");
+        closeSettings();
+    }
+
+    function manualLoad() {
+        if(confirm("Tem certeza? Isso recarregará o último estado salvo, descartando qualquer dado não salvo na tela atual.")) {
+            const savedData = localStorage.getItem('ironmanState');
+            if (savedData) {
+                appState = JSON.parse(savedData);
+                updateUI(); // Atualiza a tela com os dados recarregados
+                alert("🔄 Dados recarregados com sucesso!");
+            } else {
+                alert("❌ Nenhum dado salvo encontrado para recarregar.");
+            }
+            closeSettings();
+        }
     }
 
     // --- LÓGICA DO RELATÓRIO ---
