@@ -7,32 +7,29 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <title>Ironman Architect - Champion</title>
-<link rel="shortcut icon" type="imagex/png" href="./img/logo-iron-man.ico">
-
+    <title>Ironman Architect 5.1</title>
     <style>
         :root {
             --iron-red: #e10600;
             --iron-dark: #0f0f0f;
-            --iron-panel: rgba(26, 26, 26, 0.9); 
+            --iron-panel: rgba(26, 26, 26, 0.95); 
             --iron-white: #ffffff;
             --iron-gray: #444;
             --iron-gold: #ffce00;
             --iron-green: #00ff88;
+            --iron-blue: #00c3ff;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--iron-dark);
             color: var(--iron-white);
-            margin: 0; 
-            padding: 20px;
+            margin: 0; padding: 20px;
             min-height: 100vh;
         }
 
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            /* Certifique-se que a imagem existe na pasta img ou altere o caminho */
             background-image: url('./img/iron_man.jpg');
             background-size: cover; background-position: center;
             filter: blur(8px) brightness(0.4); transform: scale(1.1);
@@ -40,92 +37,80 @@
 
         .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* HEADER & FASE */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--iron-gray); padding-bottom: 20px; margin-bottom: 20px;
-            flex-wrap: wrap; gap: 15px;
-        }
-        
+        /* HEADER & COUNTDOWN */
+        header { border-bottom: 2px solid var(--iron-gray); padding-bottom: 20px; margin-bottom: 20px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .brand h1 { margin: 0; font-style: italic; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         
+        .countdown-box {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--iron-red);
+            padding: 10px 20px; border-radius: 6px; text-align: center; margin-top: 15px;
+            display: flex; justify-content: center; gap: 20px; font-family: 'Courier New', monospace;
+        }
+        .count-item { display: flex; flex-direction: column; }
+        .count-num { font-size: 1.5rem; font-weight: bold; color: var(--iron-white); }
+        .count-label { font-size: 0.7rem; color: var(--iron-red); text-transform: uppercase; }
+
         .header-controls { display: flex; gap: 10px; align-items: center; }
+        .phase-badge { background: var(--iron-red); padding: 5px 15px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
 
-        .phase-badge {
-            background: var(--iron-red); padding: 5px 15px; border-radius: 4px;
-            font-weight: bold; font-size: 0.9rem; text-transform: uppercase;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
+        .btn-gear-icon { background: transparent; border: none; color: var(--iron-white); cursor: pointer; padding: 5px; transition: transform 0.3s; }
+        .btn-gear-icon:hover { transform: rotate(90deg); color: var(--iron-gold); }
+        .btn-gear-icon svg { width: 24px; height: 24px; fill: currentColor; }
 
-        .btn-plan {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--iron-white);
-            color: var(--iron-white); padding: 5px 15px; border-radius: 4px;
-            cursor: pointer; font-size: 0.8rem; text-transform: uppercase;
-            transition: 0.3s; backdrop-filter: blur(5px);
-        }
-        .btn-plan:hover { background: var(--iron-white); color: var(--iron-black); }
-
-        /* NOVO: BOTÃO DE ENGRENAGEM */
-        .btn-gear {
-            background: transparent; border: none; color: var(--iron-white);
-            cursor: pointer; padding: 5px; display: flex; align-items: center;
-            transition: transform 0.3s;
-        }
-        .btn-gear:hover { transform: rotate(90deg); color: var(--iron-gold); }
-        .btn-gear svg { width: 24px; height: 24px; fill: currentColor; }
-
-        /* INPUTS */
+        /* INPUTS & RPE */
         .input-section {
-            background: var(--iron-panel); padding: 20px; border-radius: 8px;
-            margin-bottom: 30px; border: 1px solid #333;
-            backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: var(--iron-panel); padding: 20px; border-radius: 8px; margin-bottom: 30px;
+            border: 1px solid #333; backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         .input-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        input {
-            background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray);
-            color: white; padding: 12px; border-radius: 4px; flex: 1; min-width: 120px;
-        }
-        .btn-main {
-            background: var(--iron-red); color: white; border: none;
-            padding: 12px 25px; border-radius: 4px; cursor: pointer;
-            font-weight: bold; text-transform: uppercase; width: 100%;
-            transition: 0.2s; box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
-        }
+        input[type="number"] { background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); color: white; padding: 12px; border-radius: 4px; flex: 1; min-width: 120px; }
+
+        .rpe-container { margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; }
+        .rpe-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #444; border-radius: 3px; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--iron-white); border-radius: 50%; border: 2px solid var(--iron-red); }
+        .rpe-value { font-weight: bold; color: var(--iron-gold); }
+
+        .btn-main { background: var(--iron-red); color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; transition: 0.2s; }
         .btn-main:hover { background: #b30500; }
 
         /* DASHBOARD GRID */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card {
-            background: var(--iron-panel); padding: 20px;
-            border-radius: 8px; border: 1px solid #333;
-            position: relative; overflow: hidden;
-            backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+        .card { background: var(--iron-panel); padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
         .card h3 { margin: 0; font-size: 0.8rem; color: #888; text-transform: uppercase; }
         .value-display { font-size: 2.2rem; font-weight: bold; margin: 10px 0; }
         .sub-value { font-size: 0.9rem; color: #666; }
-        
         .progress-bg { background: #333; height: 6px; border-radius: 3px; margin-top: 15px; }
         .progress-fill { background: var(--iron-red); height: 100%; width: 0%; transition: 1s; }
 
-        /* MODAL GERAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 100;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+        /* FOOTER ICONS BAR */
+        .footer-bar {
+            margin-top: 40px; display: flex; justify-content: space-around; background: var(--iron-panel);
+            padding: 15px; border-radius: 8px; border-top: 2px solid var(--iron-red);
         }
-        .modal-content {
-            background: var(--iron-panel); padding: 30px; border-radius: 8px;
-            border: 1px solid var(--iron-gray); max-width: 600px; width: 90%;
-            box-shadow: 0 0 30px rgba(0,0,0, 0.8); position: relative;
+        .footer-btn {
+            background: none; border: none; color: #888; font-size: 0.7rem; text-transform: uppercase;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 5px;
         }
-        .close-btn {
-            position: absolute; top: 15px; right: 20px;
-            color: #888; cursor: pointer; font-size: 1.5rem;
-        }
+        .footer-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .footer-btn:hover, .footer-btn.active { color: var(--iron-white); }
+        .footer-btn:hover svg { fill: var(--iron-red); }
 
-        /* ESTILO DO PLANO TÁTICO */
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid var(--iron-gray); max-width: 600px; width: 90%; box-shadow: 0 0 30px rgba(0,0,0, 0.8); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 20px; color: #888; cursor: pointer; font-size: 1.5rem; }
+        
+        /* GEAR TRACKER STYLES */
+        .gear-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #333; }
+        .gear-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .gear-reset { background: #333; border: 1px solid #555; color: #ccc; font-size: 0.7rem; padding: 3px 8px; cursor: pointer; border-radius: 4px; }
+        
+        /* NUTRITION STYLES */
+        .nutrition-result { background: #222; padding: 15px; border-left: 3px solid var(--iron-gold); margin-top: 20px; display: none; }
+        
+        /* PLAN GRID STYLES (RESTAURADO) */
         .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .plan-item {
             background: rgba(37, 37, 37, 0.8); padding: 15px; border-radius: 5px; border-left: 3px solid var(--iron-red);
@@ -134,29 +119,9 @@
         .plan-item p { margin: 0; font-size: 0.9rem; color: #ddd; line-height: 1.4; }
         .full-width { grid-column: 1 / -1; border-left: 3px solid var(--iron-gold); }
 
-        /* FOOTER ACTIONS */
-        .footer-actions {
-            margin-top: 50px; text-align: center; border-top: 1px solid #333; padding-top: 20px;
-            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px;
-        }
-        .btn-report {
-            background: transparent; border: 1px solid var(--iron-gold); color: var(--iron-gold);
-            padding: 10px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase;
-             backdrop-filter: blur(5px);
-        }
-
-        /* TABLE RELATORIO */
-        .report-table { width: 100%; margin: 20px 0; border-collapse: collapse; }
-        .report-table th, .report-table td { padding: 10px; border-bottom: 1px solid #444; text-align: left; }
-        .verdict { font-size: 1.2rem; font-weight: bold; text-align: center; margin: 20px 0; }
-        .verdict.aprovado { color: var(--iron-green); }
-
-        /* NOVO: BOTÕES DO MODAL DE CONFIGURAÇÃO */
-        .settings-buttons { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
-        .btn-save-manual { background-color: var(--iron-green); color: var(--iron-dark); }
-        .btn-save-manual:hover { background-color: #00cc6a; }
-        .btn-load-manual { background-color: var(--iron-gold); color: var(--iron-dark); }
-        .btn-load-manual:hover { background-color: #e6b800; }
+        /* BACKUP BUTTONS */
+        .btn-file-input { display: none; }
+        .backup-row { display: flex; gap: 10px; margin-top: 20px; }
 
     </style>
 </head>
@@ -166,102 +131,181 @@
 
 <div class="container">
     <header>
-        <div class="brand">
-            <h1>IRONMAN <span style="color: var(--iron-red);">ARCHITECT</span></h1>
+        <div class="header-top">
+            <div class="brand">
+                <h1>IRONMAN <span style="color: var(--iron-red);">ARCHITECT</span></h1>
+            </div>
+            <div class="header-controls">
+                <button class="btn-gear-icon" onclick="openModal('settingsModal')" aria-label="Configurações">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                </button>
+                <div class="phase-badge" id="phase-badge">Fase 1</div>
+            </div>
         </div>
-        <div class="header-controls">
-            <button class="btn-plan" onclick="openPlan()">📋 Ver Plano Tático</button>
-            
-            <button class="btn-gear" onclick="openSettings()" aria-label="Configurações">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-            </button>
 
-            <div class="phase-badge" id="phase-badge">Fase 1</div>
+        <div class="countdown-box" id="countdown-display" onclick="openModal('settingsModal')">
+            <span style="font-size:0.9rem; color:#888; align-self:center;">Toque na Engrenagem para definir a data</span>
         </div>
     </header>
 
     <div class="input-section">
-        <h3 style="margin-top:0; color: #ccc;">Registro Diário</h3>
+        <h3 style="margin-top:0; color: #ccc;">Log de Treino</h3>
         <div class="input-group">
             <input type="number" id="in-swim" placeholder="Natação (m)">
             <input type="number" id="in-bike" placeholder="Bike (km)">
             <input type="number" id="in-run" placeholder="Corrida (km)">
         </div>
-        <button class="btn-main" onclick="addTraining()">Registrar Treino & Atualizar</button>
+        <div class="rpe-container">
+            <div class="rpe-header">
+                <span>Intensidade (RPE)</span><span id="rpe-text" class="rpe-value">Moderado (5)</span>
+            </div>
+            <input type="range" id="rpe-input" min="1" max="10" value="5" oninput="updateRPEText(this.value)">
+        </div>
+        <button class="btn-main" onclick="addTraining()">Salvar Treino</button>
     </div>
 
     <div class="grid">
         <div class="card">
-            <h3>Natação (Acumulado)</h3>
+            <h3>Natação</h3>
             <div class="value-display"><span id="val-swim">0</span> <small>m</small></div>
-            <div class="sub-value">Meta Fase: <span id="goal-swim">0</span>m</div>
+            <div class="sub-value">Meta: <span id="goal-swim">0</span>m</div>
             <div class="progress-bg"><div id="bar-swim" class="progress-fill"></div></div>
         </div>
         <div class="card">
-            <h3>Bike (Acumulado)</h3>
+            <h3>Bike</h3>
             <div class="value-display"><span id="val-bike">0</span> <small>km</small></div>
-            <div class="sub-value">Meta Fase: <span id="goal-bike">0</span>km</div>
+            <div class="sub-value">Meta: <span id="goal-bike">0</span>km</div>
             <div class="progress-bg"><div id="bar-bike" class="progress-fill"></div></div>
         </div>
         <div class="card">
-            <h3>Corrida (Acumulado)</h3>
+            <h3>Corrida</h3>
             <div class="value-display"><span id="val-run">0</span> <small>km</small></div>
-            <div class="sub-value">Meta Fase: <span id="goal-run">0</span>km</div>
+            <div class="sub-value">Meta: <span id="goal-run">0</span>km</div>
             <div class="progress-bg"><div id="bar-run" class="progress-fill"></div></div>
         </div>
     </div>
 
-    <div class="footer-actions">
-        <button class="btn-report" onclick="generateReport()">⚠ Encerrar Fase & Avaliar</button>
+    <div class="footer-bar">
+        <button class="footer-btn" onclick="openModal('planModal')">
+            <svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M16,13H8V11H16V13M16,17H8V15H16V17M13,9V3.5L18.5,9H13Z"/></svg>
+            Plano
+        </button>
+        <button class="footer-btn" onclick="openModal('nutritionModal')">
+            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M13,17H11V11H13V17M13,9H11V7H13V9Z"/></svg>
+            Nutrição
+        </button>
+        <button class="footer-btn" onclick="openModal('gearModal')">
+            <svg viewBox="0 0 24 24"><path d="M12,16A3,3 0 0,1 9,13C9,11.88 9.61,10.9 10.5,10.39L20.21,4.77L14.68,14.35C14.18,15.33 13.17,16 12,16M12,3C13.81,3 15.5,3.5 16.97,4.32L14.87,5.53C14,5.19 13,5 12,5A8,8 0 0,0 4,13C4,15.21 4.89,17.21 6.34,18.65H6.35C6.74,19.04 6.74,19.67 6.35,20.06C5.96,20.45 5.32,20.45 4.93,20.07V20.07C3.12,18.26 2,15.76 2,13A10,10 0 0,1 12,3M22,13C22,15.76 20.88,18.26 19.07,20.07V20.07C18.68,20.45 18.05,20.45 17.66,20.06C17.27,19.67 17.27,19.04 17.66,18.65V18.65C19.11,17.2 20,15.21 20,13C20,12 19.81,11 19.46,10.1L20.67,8C21.5,9.5 22,11.18 22,13Z"/></svg>
+            Equipamento
+        </button>
+        <button class="footer-btn" onclick="generateReport()">
+            <svg viewBox="0 0 24 24"><path d="M3.5,18.5L9.5,12.5L13.5,16.5L22,6.92L20.59,5.5L13.5,13.5L9.5,9.5L2,17L3.5,18.5Z"/></svg>
+            Relatório
+        </button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
+        <h2 style="margin-top:0;">Configurações</h2>
+        
+        <label style="color:#888;">📅 Data da Prova:</label>
+        <input type="date" id="race-date-input" class="settings-input" onchange="saveRaceDate()" style="width:100%; padding:10px; margin:10px 0; background:#333; color:white; border:1px solid #555;">
+
+        <hr style="border:1px solid #333; margin:20px 0;">
+        
+        <h3 style="font-size:1rem; color:var(--iron-blue);">💾 Backup de Segurança</h3>
+        <p style="font-size:0.8rem; color:#888;">Baixe seus dados para não perder se limpar o celular.</p>
+        
+        <div class="backup-row">
+            <button class="btn-main" style="background:var(--iron-blue);" onclick="exportData()">⬇ Exportar Backup</button>
+            <label class="btn-main" style="background:var(--iron-gray); text-align:center; cursor:pointer;">
+                ⬆ Importar Backup
+                <input type="file" class="btn-file-input" id="backup-file" onchange="importData(this)">
+            </label>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="nutritionModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('nutritionModal')">&times;</span>
+        <h2 style="color:var(--iron-gold);">Laboratório de Combustível 🍌</h2>
+        <p style="font-size:0.9rem; color:#ccc;">Regra de Ouro: 60g a 90g de carboidrato por hora.</p>
+        
+        <div class="input-group">
+            <input type="number" id="nutri-weight" placeholder="Seu Peso (kg)">
+            <input type="number" id="nutri-hours" placeholder="Duração Treino (horas)">
+        </div>
+        <button class="btn-main" onclick="calculateNutrition()">Calcular</button>
+        
+        <div id="nutri-result" class="nutrition-result">
+            <h4 style="margin:0; color:var(--iron-white);">Você precisa de:</h4>
+            <div style="font-size:2rem; font-weight:bold; color:var(--iron-gold); margin:10px 0;" id="nutri-grams">0g Carbo</div>
+            <p style="margin:0; font-size:0.9rem; color:#ccc;">Isso equivale aproximadamente a:</p>
+            <ul id="nutri-breakdown" style="color:white; padding-left:20px; line-height:1.6;"></ul>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="gearModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('gearModal')">&times;</span>
+        <h2 style="color:var(--iron-red);">Garagem de Equipamentos 🔧</h2>
+        <p style="font-size:0.9rem; color:#888;">Evite lesões e falhas mecânicas.</p>
+        
+        <div class="gear-item">
+            <div class="gear-header">
+                <span>👟 Tênis de Corrida</span>
+                <button class="gear-reset" onclick="resetGear('shoes')">Trocar Tênis</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span id="gear-shoes-val">0 km</span>
+                <span style="font-size:0.8rem; color:#666;">Limite: 800km</span>
+            </div>
+            <div class="progress-bg"><div id="bar-shoes" class="progress-fill"></div></div>
+            <p id="alert-shoes" style="font-size:0.8rem; color:var(--iron-red); display:none; margin-top:5px;">⚠ LIMITE ATINGIDO! Considere trocar.</p>
+        </div>
+
+        <div class="gear-item" style="border:none;">
+            <div class="gear-header">
+                <span>⛓️ Corrente Bike</span>
+                <button class="gear-reset" onclick="resetGear('chain')">Trocar Corrente</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span id="gear-chain-val">0 km</span>
+                <span style="font-size:0.8rem; color:#666;">Limite: 5000km</span>
+            </div>
+            <div class="progress-bg"><div id="bar-chain" class="progress-fill"></div></div>
+        </div>
     </div>
 </div>
 
 <div class="modal-overlay" id="planModal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closePlan()">&times;</span>
+        <span class="close-btn" onclick="closeModal('planModal')">&times;</span>
         <h2 style="margin-top:0; color: var(--iron-white);">Briefing da Missão</h2>
         <p style="color: var(--iron-red); font-weight: bold; text-transform: uppercase;" id="plan-phase-name"></p>
         <p style="font-style: italic; color: #888; margin-bottom: 20px;" id="plan-objective"></p>
-        
         <div class="plan-grid" id="plan-container"></div>
     </div>
 </div>
 
 <div class="modal-overlay" id="reportModal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeReport()">&times;</span>
-        <h2 style="margin-top:0; color: var(--iron-red);">Relatório de Cruzamento</h2>
-        <table class="report-table">
-            <thead><tr><th>Disciplina</th><th>Realizado</th><th>Meta</th><th>%</th></tr></thead>
+        <span class="close-btn" onclick="closeModal('reportModal')">&times;</span>
+        <h2 style="color:var(--iron-red);">Relatório de Cruzamento</h2>
+        <table class="report-table" style="width:100%; border-collapse:collapse;">
             <tbody id="report-body"></tbody>
         </table>
-        <div id="verdict-display" class="verdict"></div>
-        <p id="verdict-msg" style="text-align: center; font-size: 0.9rem; color: #ccc;"></p>
-        <button class="btn-main" onclick="advancePhase()" id="btn-advance" style="display:none; margin-top:15px;">Avançar Fase</button>
+        <div id="verdict-display" class="verdict" style="text-align:center; font-weight:bold; margin-top:20px;"></div>
+        <button class="btn-main" id="btn-advance" onclick="advancePhase()" style="display:none; margin-top:15px;">Avançar Fase</button>
     </div>
 </div>
-
-<div class="modal-overlay" id="settingsModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeSettings()">&times;</span>
-        <h2 style="margin-top:0; color: var(--iron-white);">Controle de Dados</h2>
-        <p style="color: #ccc;">O aplicativo salva automaticamente, mas você pode forçar ações manuais aqui.</p>
-        
-        <div class="settings-buttons">
-            <button class="btn-main btn-save-manual" onclick="manualSave()">
-                💾 Salvar Dados Agora
-            </button>
-            <button class="btn-main btn-load-manual" onclick="manualLoad()">
-                🔄 Recarregar Último Salve
-            </button>
-        </div>
-        <p style="font-size: 0.8rem; color: #888; margin-top: 20px;">*Útil se você trocou de dispositivo recentemente ou se os dados parecerem desatualizados.</p>
-    </div>
-</div>
-
 
 <script>
-    // --- CONFIGURAÇÃO DETALHADA DAS FASES ---
+    // --- CONFIGURAÇÃO DETALHADA DAS FASES (RESTAURADA) ---
     const phasesConfig = [
         {
             id: 1,
@@ -313,174 +357,208 @@
         }
     ];
 
+    // Carregar Estado ou Iniciar Novo
     let appState = JSON.parse(localStorage.getItem('ironmanState')) || {
         phaseIndex: 0,
-        data: { swim: 0, bike: 0, run: 0 }
+        data: { swim: 0, bike: 0, run: 0 },
+        raceDate: null,
+        gear: { shoes: 0, chain: 0 }
     };
+    
+    // Safety check para versões antigas
+    if(!appState.gear) appState.gear = { shoes: 0, chain: 0 };
 
-    function init() { updateUI(); }
+    function init() {
+        updateUI();
+        startCountdown();
+        updateGearUI();
+        if(appState.raceDate) document.getElementById('race-date-input').value = appState.raceDate;
+    }
+
+    // --- AÇÕES PRINCIPAIS ---
+    function updateRPEText(val) {
+        const labels = ["", "Muito Leve", "Leve", "Leve", "Moderado", "Moderado", "Forte", "Forte", "Muito Forte", "Exaustão", "Máxima"];
+        const colors = ["", "#0f8", "#0f8", "#0f8", "#fc0", "#fc0", "#f60", "#f60", "#f33", "#f00", "#f00"];
+        const el = document.getElementById('rpe-text');
+        el.innerText = `${labels[val]} (${val})`;
+        el.style.color = colors[val];
+    }
 
     function addTraining() {
         const s = parseFloat(document.getElementById('in-swim').value) || 0;
         const b = parseFloat(document.getElementById('in-bike').value) || 0;
         const r = parseFloat(document.getElementById('in-run').value) || 0;
 
+        if (s===0 && b===0 && r===0) { alert("Insira uma distância."); return; }
+
         appState.data.swim += s;
         appState.data.bike += b;
         appState.data.run += r;
 
+        appState.gear.shoes += r;
+        appState.gear.chain += b;
+
         saveState();
         updateUI();
-        
+        updateGearUI();
+
         document.getElementById('in-swim').value = '';
         document.getElementById('in-bike').value = '';
         document.getElementById('in-run').value = '';
+        alert("✅ Treino Registrado!");
     }
 
-    // Função principal de salvar (automática)
-    function saveState() {
-        try {
-            localStorage.setItem('ironmanState', JSON.stringify(appState));
-        } catch (e) {
-            alert("Erro crítico: Não foi possível salvar no armazenamento local. O dispositivo pode estar sem memória.");
-            console.error("Erro ao salvar:", e);
-        }
-    }
+    function saveState() { localStorage.setItem('ironmanState', JSON.stringify(appState)); }
 
     function updateUI() {
-        const currentPhase = phasesConfig[appState.phaseIndex];
+        const p = phasesConfig[appState.phaseIndex];
+        document.getElementById('phase-badge').innerText = p.name.split(':')[0];
         
-        document.getElementById('phase-badge').innerText = currentPhase.name.split(':')[0];
+        ['swim','bike','run'].forEach(mode => {
+            const val = appState.data[mode];
+            const goal = p.goals[mode];
+            document.getElementById(`val-${mode}`).innerText = val;
+            document.getElementById(`goal-${mode}`).innerText = goal;
+            const pct = Math.min((val/goal)*100, 100);
+            const bar = document.getElementById(`bar-${mode}`);
+            bar.style.width = pct + '%';
+            bar.style.background = pct>=100 ? 'var(--iron-green)' : 'var(--iron-red)';
+        });
+    }
+
+    // --- GEAR TRACKER ---
+    function updateGearUI() {
+        const shoesLimit = 800;
+        const chainLimit = 5000;
         
-        document.getElementById('val-swim').innerText = appState.data.swim;
-        document.getElementById('val-bike').innerText = appState.data.bike;
-        document.getElementById('val-run').innerText = appState.data.run;
+        const sPct = Math.min((appState.gear.shoes / shoesLimit) * 100, 100);
+        document.getElementById('gear-shoes-val').innerText = appState.gear.shoes.toFixed(1) + " km";
+        const sBar = document.getElementById('bar-shoes');
+        sBar.style.width = sPct + '%';
+        sBar.style.background = sPct > 90 ? 'var(--iron-red)' : (sPct > 70 ? 'var(--iron-gold)' : 'var(--iron-green)');
+        document.getElementById('alert-shoes').style.display = sPct >= 100 ? 'block' : 'none';
 
-        document.getElementById('goal-swim').innerText = currentPhase.goals.swim;
-        document.getElementById('goal-bike').innerText = currentPhase.goals.bike;
-        document.getElementById('goal-run').innerText = currentPhase.goals.run;
-
-        updateBar('swim', appState.data.swim, currentPhase.goals.swim);
-        updateBar('bike', appState.data.bike, currentPhase.goals.bike);
-        updateBar('run', appState.data.run, currentPhase.goals.run);
+        const cPct = Math.min((appState.gear.chain / chainLimit) * 100, 100);
+        document.getElementById('gear-chain-val').innerText = appState.gear.chain.toFixed(1) + " km";
+        const cBar = document.getElementById('bar-chain');
+        cBar.style.width = cPct + '%';
+        cBar.style.background = cPct > 90 ? 'var(--iron-red)' : 'var(--iron-green)';
     }
 
-    function updateBar(type, val, goal) {
-        const pct = Math.min((val / goal) * 100, 100);
-        const bar = document.getElementById(`bar-${type}`);
-        bar.style.width = pct + '%';
-        bar.style.background = pct >= 100 ? 'var(--iron-green)' : 'var(--iron-red)';
-    }
-
-    // --- LÓGICA DOS MODAIS (Plano, Relatório e Configurações) ---
-    function openPlan() {
-        const phase = phasesConfig[appState.phaseIndex];
-        document.getElementById('plan-phase-name').innerText = phase.name;
-        document.getElementById('plan-objective').innerText = "Objetivo: " + phase.plan.obj;
-        
-        const container = document.getElementById('plan-container');
-        container.innerHTML = `
-            <div class="plan-item"><h4>🏊 Natação</h4><p>${phase.plan.swim}</p></div>
-            <div class="plan-item"><h4>🚴 Ciclismo</h4><p>${phase.plan.bike}</p></div>
-            <div class="plan-item"><h4>🏃 Corrida</h4><p>${phase.plan.run}</p></div>
-            <div class="plan-item full-width"><h4>🏋️ Musculação / Extra</h4><p>${phase.plan.gym}</p></div>
-        `;
-        
-        document.getElementById('planModal').style.display = 'flex';
-    }
-
-    function closePlan() { document.getElementById('planModal').style.display = 'none'; }
-
-    // NOVO: Funções do Modal de Configurações (Engrenagem)
-    function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
-    function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
-
-    // NOVO: Funções Manuais de Salvar/Carregar
-    function manualSave() {
-        saveState(); // Usa a mesma lógica do salvamento automático
-        alert("✅ Dados salvos manualmente com sucesso!");
-        closeSettings();
-    }
-
-    function manualLoad() {
-        if(confirm("Tem certeza? Isso recarregará o último estado salvo, descartando qualquer dado não salvo na tela atual.")) {
-            const savedData = localStorage.getItem('ironmanState');
-            if (savedData) {
-                appState = JSON.parse(savedData);
-                updateUI(); // Atualiza a tela com os dados recarregados
-                alert("🔄 Dados recarregados com sucesso!");
-            } else {
-                alert("❌ Nenhum dado salvo encontrado para recarregar.");
-            }
-            closeSettings();
-        }
-    }
-
-    // --- LÓGICA DO RELATÓRIO ---
-    function generateReport() {
-        const currentPhase = phasesConfig[appState.phaseIndex];
-        const data = appState.data;
-        const goals = currentPhase.goals;
-
-        const pSwim = (data.swim / goals.swim) * 100;
-        const pBike = (data.bike / goals.bike) * 100;
-        const pRun = (data.run / goals.run) * 100;
-        const avgCompletion = (pSwim + pBike + pRun) / 3;
-
-        const tbody = document.getElementById('report-body');
-        tbody.innerHTML = `
-            <tr><td>Natação</td><td>${data.swim}m</td><td>${goals.swim}m</td><td style="color:${getColor(pSwim)}">${pSwim.toFixed(1)}%</td></tr>
-            <tr><td>Bike</td><td>${data.bike}km</td><td>${goals.bike}km</td><td style="color:${getColor(pBike)}">${pBike.toFixed(1)}%</td></tr>
-            <tr><td>Corrida</td><td>${data.run}km</td><td>${goals.run}km</td><td style="color:${getColor(pRun)}">${pRun.toFixed(1)}%</td></tr>
-        `;
-
-        const verdictTitle = document.getElementById('verdict-display');
-        const verdictMsg = document.getElementById('verdict-msg');
-        const btnAdvance = document.getElementById('btn-advance');
-
-        if (avgCompletion >= 80) {
-            verdictTitle.innerText = "APROVADO PARA AVANÇAR";
-            verdictTitle.className = "verdict aprovado";
-            verdictMsg.innerText = "Volume consistente. Pronto para o próximo nível.";
-            btnAdvance.style.display = 'block';
-        } else {
-            verdictTitle.innerText = "DÉFICIT DE VOLUME";
-            verdictTitle.className = "verdict";
-            verdictTitle.style.color = "var(--iron-red)";
-            verdictMsg.innerText = "Complete mais treinos antes de avançar.";
-            btnAdvance.style.display = 'none';
-        }
-
-        document.getElementById('reportModal').style.display = 'flex';
-    }
-
-    function closeReport() { document.getElementById('reportModal').style.display = 'none'; }
-    
-    function getColor(pct) { return pct >= 100 ? 'var(--iron-green)' : (pct >= 70 ? 'var(--iron-gold)' : 'var(--iron-red)'); }
-
-    function advancePhase() {
-        if (appState.phaseIndex < phasesConfig.length - 1) {
-            appState.phaseIndex++;
-            appState.data = { swim: 0, bike: 0, run: 0 };
+    function resetGear(type) {
+        if(confirm(`Você comprou um novo item (${type})? Isso irá zerar o contador.`)) {
+            appState.gear[type] = 0;
             saveState();
-            init();
-            closeReport();
-            alert("Bem-vindo à " + phasesConfig[appState.phaseIndex].name);
-        } else {
-            alert("Parabéns! Ciclo Ironman Completo!");
+            updateGearUI();
         }
+    }
+
+    // --- NUTRITION ---
+    function calculateNutrition() {
+        const w = parseFloat(document.getElementById('nutri-weight').value);
+        const h = parseFloat(document.getElementById('nutri-hours').value);
+        
+        if(!w || !h) { alert("Preencha peso e horas."); return; }
+
+        const carbsPerHour = 60; 
+        const totalCarbs = Math.round(carbsPerHour * h);
+        const gels = Math.floor(totalCarbs / 22);
+        const bottles = Math.round((totalCarbs % 22) / 30);
+        
+        document.getElementById('nutri-result').style.display = 'block';
+        document.getElementById('nutri-grams').innerText = totalCarbs + "g Carbo";
+        document.getElementById('nutri-breakdown').innerHTML = `
+            <li>~ ${gels} Géis de Carboidrato</li>
+            <li>~ ${bottles} Garrafas de Isotônico</li>
+            <li>Ou ${Math.round(totalCarbs/25)} Bananinhas</li>
+        `;
+    }
+
+    // --- BACKUP ---
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "ironman-backup-" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    function importData(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if(confirm("Isso substituirá seus dados atuais. Confirmar?")) {
+                    appState = imported;
+                    if(!appState.gear) appState.gear = { shoes:0, chain:0 };
+                    saveState();
+                    init();
+                    alert("Backup restaurado com sucesso!");
+                    closeModal('settingsModal');
+                }
+            } catch(err) { alert("Erro ao ler arquivo."); }
+        };
+        reader.readAsText(file);
+    }
+
+    // --- HELPERS E MODAIS ---
+    function openModal(id) { 
+        if(id === 'planModal') {
+            const phase = phasesConfig[appState.phaseIndex];
+            document.getElementById('plan-phase-name').innerText = phase.name;
+            document.getElementById('plan-objective').innerText = "Objetivo: " + phase.plan.obj;
+            document.getElementById('plan-container').innerHTML = `
+                <div class="plan-item"><h4>🏊 Natação</h4><p>${phase.plan.swim}</p></div>
+                <div class="plan-item"><h4>🚴 Ciclismo</h4><p>${phase.plan.bike}</p></div>
+                <div class="plan-item"><h4>🏃 Corrida</h4><p>${phase.plan.run}</p></div>
+                <div class="plan-item full-width"><h4>🏋️ Musculação / Extra</h4><p>${phase.plan.gym}</p></div>
+            `;
+        }
+        document.getElementById(id).style.display = 'flex'; 
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function saveRaceDate() { appState.raceDate = document.getElementById('race-date-input').value; saveState(); startCountdown(); }
+    function startCountdown() {
+        if(!appState.raceDate) return;
+        const disp = document.getElementById('countdown-display');
+        setInterval(() => {
+            const diff = new Date(appState.raceDate) - new Date();
+            if(diff < 0) { disp.innerHTML = "IRONMAN DAY!"; return; }
+            const d = Math.floor(diff/(1000*60*60*24));
+            disp.innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS PARA A GLÓRIA</span>`;
+        }, 1000);
+    }
+
+    function generateReport() {
+        openModal('reportModal');
+        const p = phasesConfig[appState.phaseIndex];
+        const rows = ['swim','bike','run'].map(k => {
+            const pct = (appState.data[k] / p.goals[k]) * 100;
+            return `<tr><td>${k.toUpperCase()}</td><td>${appState.data[k]}</td><td>${pct.toFixed(0)}%</td></tr>`;
+        }).join('');
+        document.getElementById('report-body').innerHTML = rows;
+        
+        const totalPct = (appState.data.swim/p.goals.swim + appState.data.bike/p.goals.bike + appState.data.run/p.goals.run)/3;
+        const pass = totalPct >= 0.8;
+        document.getElementById('verdict-display').innerText = pass ? "APROVADO ✅" : "PENDENTE ⏳";
+        document.getElementById('verdict-display').style.color = pass ? "var(--iron-green)" : "var(--iron-red)";
+        document.getElementById('btn-advance').style.display = pass ? "block" : "none";
+    }
+    
+    function advancePhase() {
+        if(appState.phaseIndex < 3) {
+            appState.phaseIndex++;
+            appState.data = { swim:0, bike:0, run:0 };
+            saveState(); init(); closeModal('reportModal');
+        } else { alert("Você completou o ciclo!"); }
     }
 
     init();
-
-    // --- REGISTRO DO SERVICE WORKER (PWA) ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado!', reg))
-                .catch(err => console.log('Erro ao registrar SW:', err));
-        });
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 
 </body>
