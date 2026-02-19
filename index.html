@@ -318,7 +318,7 @@
         <div class="log-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;" onclick="toggleLog()">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <h3 style="margin:0; color: #ccc;">Log de Treino</h3>
-                <span id="log-icon" class="icon-rotate">▼</span>
+                <span id="log-icon" class="icon-rotate collapsed">▼</span>
             </div>
             
             <label class="gpx-link" onclick="event.stopPropagation();">
@@ -328,7 +328,7 @@
             </label>
         </div>
         
-        <div id="log-inputs-wrapper" class="log-content-wrapper">
+        <div id="log-inputs-wrapper" class="log-content-wrapper collapsed">
             <div class="input-row">
                 <div class="input-col"><label>🏊 Natação (m)</label><input type="number" id="in-swim" placeholder="Metros"></div>
                 <div class="input-col"><label>Tempo (min)</label><input type="number" id="in-swim-time" placeholder="Minutos"></div>
@@ -526,14 +526,17 @@
         // J.A.R.V.I.S. Saudação e Alerta Inicial (Apenas uma vez por sessão)
         if(!sessionStorage.getItem('jarvisWelcomed')) {
             sessionStorage.setItem('jarvisWelcomed', 'true');
+            
+            // Lógica mais inteligente para ler a data do último treino ou do início da fase
+            let referenceDate = new Date(appState.phaseStartDate);
             if(appState.logs && appState.logs.length > 0) {
-                const diffDays = Math.floor(Math.abs(new Date() - new Date(appState.logs[0].date)) / (1000 * 60 * 60 * 24));
-                if(diffDays >= 7) setTimeout(() => jarvisSpeak(`Atenção, alerta crítico senhor. Sem treinos registados há ${diffDays} dias. O condicionamento está em risco.`), 1500);
-                else if(diffDays >= 3) setTimeout(() => jarvisSpeak(`Aviso, senhor. Já se passaram ${diffDays} dias desde o último treino.`), 1500);
-                else setTimeout(() => jarvisSpeak("Sistemas online. Bem-vindo de volta, senhor."), 1500);
-            } else {
-                setTimeout(() => jarvisSpeak("Protocolo Ironman iniciado. À espera do primeiro registo de treino."), 1500);
+                referenceDate = new Date(appState.logs[0].date);
             }
+            const diffDays = Math.floor((new Date() - referenceDate) / (1000 * 60 * 60 * 24));
+            
+            if(diffDays >= 7) setTimeout(() => jarvisSpeak(`Atenção, alerta crítico senhor. Sem treinos registados há ${diffDays} dias. O condicionamento está em risco.`), 1500);
+            else if(diffDays >= 3) setTimeout(() => jarvisSpeak(`Aviso, senhor. Já se passaram ${diffDays} dias desde o último treino.`), 1500);
+            else setTimeout(() => jarvisSpeak("Sistemas online. Bem-vindo de volta, senhor."), 1500);
         }
     }
 
@@ -580,21 +583,21 @@
         const msgBox = document.getElementById('jarvis-idle-msg');
         const headerText = document.querySelector('#jarvis-idle-alert h4');
         
-        if(!appState.logs || appState.logs.length === 0) {
-            alertBox.style.display = 'none';
-            return;
+        // Verifica a data baseando-se no histórico ou na data inicial do app
+        let referenceDate = new Date(appState.phaseStartDate);
+        if(appState.logs && appState.logs.length > 0) {
+            referenceDate = new Date(appState.logs[0].date);
         }
 
-        const lastLogDate = new Date(appState.logs[0].date);
         const today = new Date();
-        const diffDays = Math.floor(Math.abs(today - lastLogDate) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.floor((today - referenceDate) / (1000 * 60 * 60 * 24));
 
         if(diffDays >= 7) {
             alertBox.style.display = 'block';
             alertBox.style.borderLeftColor = 'var(--iron-red)';
             alertBox.style.background = 'rgba(225, 6, 0, 0.1)';
             headerText.style.color = 'var(--iron-red)';
-            msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não deteto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural. Recomendo ação imediata.`;
+            msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não detecto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural. Recomendo ação imediata.`;
         } else if(diffDays >= 3) {
             alertBox.style.display = 'block';
             alertBox.style.borderLeftColor = 'var(--iron-gold)';
