@@ -627,7 +627,7 @@
     if(appState.settings === undefined) appState.settings = { voice: true };
     
     let currentCompareMode = '70.3', currentVolumeLevel = 1, currentLogFilter = 'all';
-    let weeklyChartInstance = null; // Instância do gráfico
+    let weeklyChartInstance = null; 
 
     function init() {
         updateUI(); startCountdown(); updateGearUI(); updateHealthUI();
@@ -709,7 +709,6 @@
 
         if(s===0 && b===0 && r===0) { showToast("Preencha ao menos uma distância.", "var(--iron-red)"); jarvisSpeak("Senhor, não detetei nenhum movimento de treino."); return; }
         
-        // Adicionada a propriedade "raw" para facilitar a leitura do Chart.js
         let logEntry = { 
             date: new Date().toISOString(), 
             text: [], 
@@ -769,11 +768,9 @@
         }
     }
 
-    // Função auxiliar para varrer as distâncias nos logs
     function getLogDistances(log) {
-        if (log.raw) return log.raw; // Novo método de log salvando bruto
+        if (log.raw) return log.raw; 
         
-        // Método fallback para os logs antigos 
         let swim = 0, bike = 0, run = 0;
         const textStr = log.text.join(' ');
         const sMatch = textStr.match(/🏊\s*([\d.]+)/); if (sMatch) swim = parseFloat(sMatch[1]);
@@ -782,7 +779,7 @@
         return { swim: swim, bike: bike, run: run };
     }
 
-    // Função que desenha o Gráfico Semanal via Chart.js
+    // NOVA FUNÇÃO: Renderiza o gráfico com múltiplos eixos Y
     function renderWeeklyChart() {
         const ctx = document.getElementById('weeklyChart').getContext('2d');
         
@@ -791,7 +788,6 @@
         const dataBike = [];
         const dataRun = [];
 
-        // Monta os últimos 7 dias dinamicamente
         for(let i=6; i>=0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
@@ -803,7 +799,6 @@
                 const logDate = new Date(log.date);
                 if(logDate.getDate() === d.getDate() && logDate.getMonth() === d.getMonth() && logDate.getFullYear() === d.getFullYear()) {
                     const dists = getLogDistances(log);
-                    // Natação vai pra Km para não distorcer o eixo da barra
                     dSwim += (dists.swim / 1000); 
                     dBike += dists.bike;
                     dRun += dists.run;
@@ -819,7 +814,6 @@
             weeklyChartInstance.destroy();
         }
         
-        // Estilização global do Chart.js para combinar com o HUD
         Chart.defaults.color = '#888';
         Chart.defaults.font.family = "'Segoe UI', Roboto, sans-serif";
 
@@ -828,22 +822,37 @@
             data: {
                 labels: labels,
                 datasets: [
-                    { label: 'Natação (km)', data: dataSwim, backgroundColor: '#00c3ff' },
-                    { label: 'Ciclismo (km)', data: dataBike, backgroundColor: '#e10600' },
-                    { label: 'Corrida (km)', data: dataRun, backgroundColor: '#00ff88' }
+                    { label: 'Nat. (km)', data: dataSwim, backgroundColor: '#00c3ff', yAxisID: 'y' },
+                    { label: 'Cor. (km)', data: dataRun, backgroundColor: '#00ff88', yAxisID: 'y' },
+                    { label: 'Bike (km)', data: dataBike, backgroundColor: '#e10600', yAxisID: 'y1' }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { stacked: true, grid: { color: '#222' } },
-                    y: { stacked: true, grid: { color: '#222' }, beginAtZero: true }
+                    x: { grid: { color: '#222' } },
+                    y: { 
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Nat / Cor (km)', color: '#888', font: {size: 10} },
+                        grid: { color: '#222' },
+                        beginAtZero: true
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Bike (km)', color: '#888', font: {size: 10} },
+                        grid: { drawOnChartArea: false }, // Evita traçar as linhas de grade duplamente
+                        beginAtZero: true
+                    }
                 },
                 plugins: {
                     legend: { 
                         position: 'top',
-                        labels: { color: '#ccc', font: { size: 10 } }
+                        labels: { color: '#ccc', font: { size: 10 }, boxWidth: 12 }
                     },
                     tooltip: {
                         mode: 'index',
@@ -870,7 +879,6 @@
             else { document.getElementById(`bar-${mode}`).style.background = 'var(--iron-red)'; statusText.innerText = `▼ -${Math.abs(val - expected).toFixed(0)} (Atrasado)`; statusText.className = 'status-text status-negative'; }
         });
 
-        // Chama a função para desenhar/atualizar o gráfico com as métricas recentes
         renderWeeklyChart();
     }
 
