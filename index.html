@@ -112,6 +112,15 @@
         .h-val { font-size: 1rem; font-weight: bold; color: white; }
         .h-lbl { font-size: 0.65rem; color: #888; text-transform: uppercase; }
 
+        /* ALERTA JARVIS DE OCIOSIDADE */
+        #jarvis-idle-alert {
+            display: none; background: rgba(255, 206, 0, 0.1); 
+            border-left: 4px solid var(--iron-gold); padding: 15px; 
+            border-radius: 5px; margin-bottom: 25px; backdrop-filter: blur(5px);
+            animation: fadeInAlert 0.5s ease-out;
+        }
+        @keyframes fadeInAlert { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* INPUTS E PAINEL RETRÁTIL */
         .input-section {
             background: var(--iron-panel); padding: 20px; border-radius: 8px; margin-bottom: 30px;
@@ -202,7 +211,7 @@
         .log-date { font-size: 0.75rem; color: #888; display: flex; justify-content: space-between; }
         .log-details { font-size: 0.95rem; color: var(--iron-white); margin-top: 5px; line-height: 1.4; }
 
-        /* ... RESTANTES ESTILOS (GAME, ENGRENAGENS, ETC) ... */
+        /* ESTILOS (GAME, ENGRENAGENS, ETC) */
         .level-tabs { display: flex; gap: 5px; margin-bottom: 20px; background: #222; padding: 5px; border-radius: 5px; }
         .level-tab { flex: 1; border: none; background: transparent; color: #888; padding: 10px 5px; cursor: pointer; font-size: 0.75rem; border-radius: 4px; transition: 0.3s; }
         .level-tab.active { background: #444; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
@@ -291,6 +300,16 @@
             <div class="h-metric">
                 <span class="h-val" id="val-fat">--</span>
                 <span class="h-lbl">% GORD</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="jarvis-idle-alert">
+        <div style="display:flex; align-items:center; gap: 15px;">
+            <span style="font-size: 1.8rem;">⚠️</span>
+            <div>
+                <h4 style="margin:0; font-size:0.9rem;">J.A.R.V.I.S. // AVISO DE PROTOCOLO</h4>
+                <p id="jarvis-idle-msg" style="margin: 5px 0 0 0; font-size: 0.85rem; color: #ccc;"></p>
             </div>
         </div>
     </div>
@@ -396,7 +415,7 @@
         <h2 style="color:var(--vital-main);">Monitor Fisiológico <span id="health-icon">🔵</span></h2>
         <p style="color:#ccc; font-size:0.9rem;">Configure a sua biometria base.</p>
         
-        <div class="input-group">
+        <div class="input-group" style="display:flex; gap:10px; flex-wrap:wrap;">
             <div style="flex:2;"><label style="color:#888; font-size:0.8rem;">Atleta</label><input type="text" id="health-name" placeholder="O seu Nome"></div>
             <div style="flex:1;"><label style="color:#888; font-size:0.8rem;">Sexo</label>
                 <select id="health-sex" style="width:100%; padding:12px; background:rgba(37,37,37,0.8); color:white; border:1px solid var(--iron-gray); border-radius:4px;">
@@ -491,8 +510,8 @@
     if(!appState.health.name) appState.health.name = "Rodrigo";
     if(!appState.health.sex) appState.health.sex = "M";
     if(!appState.phaseStartDate) appState.phaseStartDate = new Date().toISOString();
-    if(!appState.logs) appState.logs = []; // Novo: Array para o histórico
-    if(appState.settings === undefined) appState.settings = { voice: true }; // Novo: Conf. Voz
+    if(!appState.logs) appState.logs = []; // Histórico
+    if(appState.settings === undefined) appState.settings = { voice: true }; // Conf. Voz
     
     let currentCompareMode = '70.3';
     let currentVolumeLevel = 1;
@@ -503,6 +522,19 @@
         document.getElementById('btn-voice-toggle').innerText = appState.settings.voice ? "LIGADO" : "DESLIGADO";
         document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
         renderTips();
+
+        // J.A.R.V.I.S. Saudação e Alerta Inicial (Apenas uma vez por sessão)
+        if(!sessionStorage.getItem('jarvisWelcomed')) {
+            sessionStorage.setItem('jarvisWelcomed', 'true');
+            if(appState.logs && appState.logs.length > 0) {
+                const diffDays = Math.floor(Math.abs(new Date() - new Date(appState.logs[0].date)) / (1000 * 60 * 60 * 24));
+                if(diffDays >= 7) setTimeout(() => jarvisSpeak(`Atenção, alerta crítico senhor. Sem treinos registados há ${diffDays} dias. O condicionamento está em risco.`), 1500);
+                else if(diffDays >= 3) setTimeout(() => jarvisSpeak(`Aviso, senhor. Já se passaram ${diffDays} dias desde o último treino.`), 1500);
+                else setTimeout(() => jarvisSpeak("Sistemas online. Bem-vindo de volta, senhor."), 1500);
+            } else {
+                setTimeout(() => jarvisSpeak("Protocolo Ironman iniciado. À espera do primeiro registo de treino."), 1500);
+            }
+        }
     }
 
     // --- SISTEMA TOAST E VOZ (J.A.R.V.I.S) ---
@@ -519,7 +551,6 @@
     function jarvisSpeak(text) {
         if(!appState.settings.voice || !window.speechSynthesis) return;
         const synth = window.speechSynthesis;
-        // Evita sobreposição de vozes
         if(synth.speaking) synth.cancel();
         const ut = new SpeechSynthesisUtterance(text);
         ut.lang = 'pt-BR'; ut.rate = 1.0; ut.pitch = 0.9;
@@ -541,6 +572,38 @@
         
         wrapper.classList.toggle('collapsed');
         icon.classList.toggle('collapsed');
+    }
+
+    // --- ALERTA DE OCIOSIDADE ---
+    function checkIdleAlert() {
+        const alertBox = document.getElementById('jarvis-idle-alert');
+        const msgBox = document.getElementById('jarvis-idle-msg');
+        const headerText = document.querySelector('#jarvis-idle-alert h4');
+        
+        if(!appState.logs || appState.logs.length === 0) {
+            alertBox.style.display = 'none';
+            return;
+        }
+
+        const lastLogDate = new Date(appState.logs[0].date);
+        const today = new Date();
+        const diffDays = Math.floor(Math.abs(today - lastLogDate) / (1000 * 60 * 60 * 24));
+
+        if(diffDays >= 7) {
+            alertBox.style.display = 'block';
+            alertBox.style.borderLeftColor = 'var(--iron-red)';
+            alertBox.style.background = 'rgba(225, 6, 0, 0.1)';
+            headerText.style.color = 'var(--iron-red)';
+            msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não deteto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural. Recomendo ação imediata.`;
+        } else if(diffDays >= 3) {
+            alertBox.style.display = 'block';
+            alertBox.style.borderLeftColor = 'var(--iron-gold)';
+            alertBox.style.background = 'rgba(255, 206, 0, 0.1)';
+            headerText.style.color = 'var(--iron-gold)';
+            msgBox.innerHTML = `<strong style="color:var(--iron-gold)">ATENÇÃO:</strong> Já se passaram ${diffDays} dias desde a sua última sessão. Lembre-se, a consistência é vital.`;
+        } else {
+            alertBox.style.display = 'none';
+        }
     }
 
     // --- GPX READER ---
@@ -615,7 +678,6 @@
         
         let logEntry = { date: new Date().toISOString(), text: [], rpe: rpe };
 
-        // Montagem do Log e Cálculo de Pace
         if(s > 0) {
             let paceInfo = "";
             if(st > 0) {
@@ -638,11 +700,9 @@
             logEntry.text.push(`🏃 ${r}km${paceInfo}`);
         }
 
-        // Salvar Histórico (Guarda os últimos 10)
         appState.logs.unshift(logEntry);
         if(appState.logs.length > 10) appState.logs.pop();
 
-        // Acumuladores
         appState.data.swim += s; appState.data.bike += b; appState.data.run += r;
         appState.totalAccumulated.swim += s; appState.totalAccumulated.bike += b; appState.totalAccumulated.run += r;
         appState.gear.shoes += r; appState.gear.chain += b;
@@ -652,7 +712,6 @@
         saveState(); updateUI(); updateGearUI();
         if(document.getElementById('volumeModal').style.display === 'flex') updateVolumeUI();
         
-        // Reset dos campos
         ['in-swim','in-swim-time','in-bike','in-bike-time','in-run','in-run-time','gpx-input'].forEach(id => document.getElementById(id).value = '');
 
         showToast("Sessão salva na base de dados.", "var(--iron-green)");
@@ -663,7 +722,7 @@
             jarvisSpeak("Treino atualizado com sucesso, senhor.");
         }
 
-        // Recolhe o painel automaticamente após salvar para poupar espaço
+        // Recolhe o painel automaticamente após salvar
         const wrapper = document.getElementById('log-inputs-wrapper');
         const icon = document.getElementById('log-icon');
         if (!wrapper.classList.contains('collapsed')) {
@@ -698,6 +757,9 @@
         const startDate = new Date(appState.phaseStartDate);
         const elapsedDays = Math.max(0, (new Date() - startDate) / (1000 * 60 * 60 * 24));
         const phaseProgressRatio = Math.min(elapsedDays / 90, 1); 
+
+        // Atualiza e verifica ociodade
+        checkIdleAlert();
 
         ['swim','bike','run'].forEach(mode => {
             const val = appState.data[mode];
@@ -954,12 +1016,23 @@
         let start = new Date(appState.phaseStartDate);
         start.setDate(start.getDate() - daysToAdvance);
         appState.phaseStartDate = start.toISOString();
+        
+        // Simular o atraso nos treinos também
+        if(appState.logs.length > 0) {
+            let lastLogDate = new Date(appState.logs[0].date);
+            lastLogDate.setDate(lastLogDate.getDate() - daysToAdvance);
+            appState.logs[0].date = lastLogDate.toISOString();
+        }
+
         saveState(); updateUI(); 
         jarvisSpeak(`Salto temporal concluído, senhor. Avançámos ${daysToAdvance} dias.`);
         showToast(`⏱️ +${daysToAdvance} dias simulados.`, "var(--iron-purple)");
     }
     function resetTimeTravel() {
         appState.phaseStartDate = new Date().toISOString();
+        if(appState.logs.length > 0) {
+            appState.logs[0].date = new Date().toISOString();
+        }
         saveState(); updateUI();
         jarvisSpeak("Linha temporal estabilizada, voltámos ao dia de hoje.");
         showToast("⏱️ Tempo restaurado.", "var(--iron-gray)");
