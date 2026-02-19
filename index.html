@@ -61,7 +61,6 @@
         .startup-screen-open .startup-panel.top { transform: translateY(-100%); }
         .startup-screen-open .startup-panel.bottom { transform: translateY(100%); }
         .startup-screen-open .startup-line { opacity: 0; }
-        /* ------------------------------------------ */
 
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -82,11 +81,41 @@
         .luxo-bottom { font-size: 1.8rem; color: var(--iron-white); font-weight: 300; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
         .luxo-bold { font-weight: 800; color: var(--iron-white); }
 
+        /* CONTADOR CLÁSSICO COM EFEITO EM CHAMAS DINÂMICAS */
         .countdown-box {
             background: rgba(0,0,0,0.6); border: 1px solid var(--iron-red);
             padding: 10px 20px; border-radius: 6px; text-align: center; margin-top: 15px;
-            display: flex; justify-content: center; gap: 20px; font-family: 'Courier New', monospace;
-            cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 20px; font-family: 'Courier New', monospace;
+            cursor: pointer; transition: 0.3s;
+        }
+        .countdown-box:hover { background: rgba(0,0,0,0.8); box-shadow: 0 0 15px rgba(225, 6, 0, 0.3); }
+
+        .fire-numbers {
+            font-size: 2.03rem;
+            font-weight: 900;
+            color: #fff;
+            /* Variáveis de cor com fallback para o fogo clássico */
+            --fire-c1: #ffea00;
+            --fire-c2: #ff8000;
+            --fire-c3: #f00;
+            text-shadow: 
+                0 -1px 4px #FFF, 
+                0 -2px 10px var(--fire-c1), 
+                0 -6px 20px var(--fire-c2), 
+                0 -12px 30px var(--fire-c3);
+            animation: burn 0.5s infinite alternate;
+            padding-bottom: 5px; 
+        }
+        
+        @keyframes burn {
+            0% { 
+                text-shadow: 0 -1px 4px #FFF, 0 -2px 10px var(--fire-c1), 0 -8px 20px var(--fire-c2), 0 -14px 35px var(--fire-c3); 
+                transform: translateY(0); 
+            }
+            100% { 
+                text-shadow: 0 -1px 4px #FFF, 0 -4px 12px var(--fire-c1), 0 -12px 25px var(--fire-c2), 0 -20px 45px var(--fire-c3); 
+                transform: translateY(-1px); 
+            }
         }
 
         .header-controls { display: flex; gap: 10px; align-items: center; }
@@ -99,12 +128,9 @@
         /* MONITOR DE SAÚDE */
         .health-strip {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(10, 25, 35, 0.9);
-            border: 1px solid var(--vital-shadow);
-            border-left: 3px solid var(--vital-main);
-            padding: 12px 15px; border-radius: 8px; margin-bottom: 25px;
-            backdrop-filter: blur(10px); 
-            cursor: pointer; position: relative; overflow: hidden;
+            background: rgba(10, 25, 35, 0.9); border: 1px solid var(--vital-shadow);
+            border-left: 3px solid var(--vital-main); padding: 12px 15px; border-radius: 8px; margin-bottom: 25px;
+            backdrop-filter: blur(10px); cursor: pointer; position: relative; overflow: hidden;
             transition: border-color 0.5s, box-shadow 0.5s;
         }
         .health-strip:hover { box-shadow: 0 0 15px var(--vital-bg); transform: translateY(-2px); }
@@ -112,19 +138,11 @@
         .arc-reactor-mini {
             width: 38px; height: 38px; border-radius: 50%;
             background: radial-gradient(circle, rgba(255,255,255,0.9) 20%, var(--vital-main) 65%, transparent 80%);
-            box-shadow: 0 0 10px var(--vital-main);
-            animation: pulse-vital 3s infinite; flex-shrink: 0;
-            border: 2px solid rgba(255,255,255,0.3);
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(0, 0, 0, 0.25); 
-            font-weight: 900; 
-            font-size: 0.85rem;
+            box-shadow: 0 0 10px var(--vital-main); animation: pulse-vital 3s infinite; flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;
+            color: rgba(0, 0, 0, 0.25); font-weight: 900; font-size: 0.85rem;
         }
-        @keyframes pulse-vital { 
-            0% { box-shadow: 0 0 5px var(--vital-main); opacity: 0.8; } 
-            50% { box-shadow: 0 0 20px var(--vital-main); opacity: 1; } 
-            100% { box-shadow: 0 0 5px var(--vital-main); opacity: 0.8; } 
-        }
+        @keyframes pulse-vital { 0% { box-shadow: 0 0 5px var(--vital-main); opacity: 0.8; } 50% { box-shadow: 0 0 20px var(--vital-main); opacity: 1; } 100% { box-shadow: 0 0 5px var(--vital-main); opacity: 0.8; } }
 
         .health-info { margin-left: 15px; flex-grow: 1; }
         .health-title { font-size: 0.75rem; color: var(--vital-main); text-transform: uppercase; letter-spacing: 1px; transition: color 0.5s; }
@@ -135,47 +153,21 @@
         .h-lbl { font-size: 0.65rem; color: #888; text-transform: uppercase; }
 
         /* ALERTA JARVIS DE OCIOSIDADE */
-        #jarvis-idle-alert {
-            display: none; background: rgba(255, 206, 0, 0.1); 
-            border-left: 4px solid var(--iron-gold); padding: 15px; 
-            border-radius: 5px; margin-bottom: 25px; backdrop-filter: blur(5px);
-            animation: fadeInAlert 0.5s ease-out;
-        }
+        #jarvis-idle-alert { display: none; background: rgba(255, 206, 0, 0.1); border-left: 4px solid var(--iron-gold); padding: 15px; border-radius: 5px; margin-bottom: 25px; backdrop-filter: blur(5px); animation: fadeInAlert 0.5s ease-out; }
         @keyframes fadeInAlert { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* INPUTS E PAINEL RETRÁTIL */
-        .input-section {
-            background: var(--iron-panel); padding: 20px; border-radius: 8px; margin-bottom: 30px;
-            border: 1px solid #333; backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-        
-        .log-header {
-            cursor: pointer; user-select: none; padding-bottom: 5px;
-            border-bottom: 1px solid transparent; transition: 0.3s;
-        }
+        .input-section { background: var(--iron-panel); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333; backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .log-header { cursor: pointer; user-select: none; padding-bottom: 5px; border-bottom: 1px solid transparent; transition: 0.3s; }
         .log-header:hover { opacity: 0.8; }
-        
-        .log-content-wrapper {
-            max-height: 500px; overflow: hidden;
-            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, margin-top 0.4s ease-in-out;
-            opacity: 1;
-        }
-        .log-content-wrapper.collapsed {
-            max-height: 0; opacity: 0;
-            margin-top: -10px; pointer-events: none;
-        }
-        
+        .log-content-wrapper { max-height: 500px; overflow: hidden; transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, margin-top 0.4s ease-in-out; opacity: 1; }
+        .log-content-wrapper.collapsed { max-height: 0; opacity: 0; margin-top: -10px; pointer-events: none; }
         .icon-rotate { display: inline-block; font-size: 0.7rem; color: var(--iron-red); transition: transform 0.3s ease; }
         .icon-rotate.collapsed { transform: rotate(-90deg); color: #888; }
-
         .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-col { flex: 1; display: flex; flex-direction: column; }
         .input-col label { font-size: 0.7rem; color: #888; margin-bottom: 3px; text-transform: uppercase; }
-        
-        input[type="number"], input[type="text"], select { 
-            background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); 
-            color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box;
-        }
+        input[type="number"], input[type="text"], select { background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box; }
 
         .rpe-container { margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; }
         .rpe-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
@@ -186,17 +178,15 @@
         .btn-main { background: var(--iron-red); color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; transition: 0.2s; }
         .btn-main:hover { background: #b30500; }
 
-        /* GPX LINK SUTIL */
         .gpx-link { font-size: 0.75rem; color: var(--iron-blue); cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 5px; opacity: 0.7; transition: 0.3s; }
         .gpx-link:hover { opacity: 1; text-shadow: 0 0 5px var(--iron-blue); }
 
-        /* DASHBOARD GRID E FANTASMA */
+        /* DASHBOARD GRID */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .card { background: var(--iron-panel); padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
         .card h3 { margin: 0; font-size: 0.8rem; color: #888; text-transform: uppercase; }
         .value-display { font-size: 2.2rem; font-weight: bold; margin: 10px 0; }
         .sub-value { font-size: 0.9rem; color: #666; }
-        
         .progress-bg { background: #333; height: 6px; border-radius: 3px; margin-top: 15px; position: relative; overflow: hidden; }
         .progress-fill { background: var(--iron-red); height: 100%; width: 0%; transition: 1s; }
         .ghost-marker { position: absolute; top: 0; bottom: 0; width: 4px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 8px rgba(255, 255, 255, 0.8); z-index: 5; transition: left 1s ease-in-out; border-radius: 2px; }
@@ -293,7 +283,7 @@
         </div>
 
         <div class="countdown-box" id="countdown-display" onclick="openModal('settingsModal')">
-            <span style="font-size:0.9rem; color:#888; align-self:center;">Toque na Engrenagem para definir a data</span>
+            <span style="font-size:0.9rem; color:#888; align-self:center;">Toque na Engrenagem para definir a data da prova</span>
         </div>
     </header>
 
@@ -337,11 +327,17 @@
                 <span id="log-icon" class="icon-rotate collapsed">▼</span>
             </div>
             
-            <label class="gpx-link" onclick="event.stopPropagation();">
-                <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z"/></svg>
-                Importar GPX
-                <input type="file" id="gpx-input" accept=".gpx" class="btn-file-input" onchange="handleGPXUpload(this)">
-            </label>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <span class="gpx-link" onclick="event.stopPropagation(); syncStrava()" style="color: #fc4c02;" title="Sincronizar última atividade do Strava">
+                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+                    Strava API
+                </span>
+                <label class="gpx-link" onclick="event.stopPropagation();">
+                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z"/></svg>
+                    Importar GPX
+                    <input type="file" id="gpx-input" accept=".gpx" class="btn-file-input" onchange="handleGPXUpload(this)">
+                </label>
+            </div>
         </div>
         
         <div id="log-inputs-wrapper" class="log-content-wrapper collapsed">
@@ -466,7 +462,7 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
         <h2 style="margin-top:0;">Configurações</h2>
-        <label style="color:#888;">📅 Data da Prova:</label>
+        <label style="color:#888;">📅 Data da Prova (1 Ano Sugerido):</label>
         <input type="date" id="race-date-input" class="settings-input" onchange="saveRaceDate()" style="width:100%; padding:10px; margin:10px 0; background:#333; color:white; border:1px solid #555;">
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0; background:rgba(0,0,0,0.3); padding:10px; border-radius:5px;">
@@ -483,7 +479,7 @@
         
         <hr style="border:1px solid #333; margin:20px 0;">
         <h3 style="font-size:1rem; color:var(--iron-purple);">⏱️ J.A.R.V.I.S. Override (Debug de Tempo)</h3>
-        <p style="font-size:0.8rem; color:#888;">Simule o avanço do tempo para testar o Fantasma da Performance.</p>
+        <p style="font-size:0.8rem; color:#888;">Simule o avanço do tempo para testar as Fases e Cores do Fogo.</p>
         <div style="display:flex; gap:10px; margin-bottom: 20px;">
             <button class="btn-main" style="background:var(--iron-purple); font-size: 0.8rem;" onclick="simulateTimeTravel(7)">+ 1 Semana</button>
             <button class="btn-main" style="background:var(--iron-purple); font-size: 0.8rem;" onclick="simulateTimeTravel(30)">+ 1 Mês</button>
@@ -501,54 +497,59 @@
 <div class="modal-overlay" id="reportModal"><div class="modal-content"><span class="close-btn" onclick="closeModal('reportModal')">&times;</span><h2 style="color:var(--iron-red);">Relatório de Cruzamento</h2><table class="report-table"><tbody id="report-body"></tbody></table><div id="verdict-display" class="verdict" style="text-align:center; font-weight:bold; margin-top:20px;"></div><button class="btn-main" id="btn-advance" onclick="advancePhase()" style="display:none; margin-top:15px;">Avançar Fase</button></div></div>
 
 <script>
+    // --- STRAVA API INTEGRATION ---
+    const STRAVA_CLIENT_ID = 'SEU_CLIENT_ID';
+    const STRAVA_CLIENT_SECRET = 'SEU_CLIENT_SECRET';
+    const STRAVA_REFRESH_TOKEN = 'SEU_REFRESH_TOKEN';
+
+    async function syncStrava() {
+        if (STRAVA_CLIENT_ID === 'SEU_CLIENT_ID') {
+            showToast("Configure as credenciais do Strava no código fonte.", "var(--iron-gold)");
+            jarvisSpeak("Senhor, as credenciais da API do Strava não estão configuradas.");
+            return;
+        }
+        try {
+            showToast("Conectando aos satélites Strava...", "var(--iron-blue)");
+            const tokenResponse = await fetch(`https://www.strava.com/oauth/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ client_id: STRAVA_CLIENT_ID, client_secret: STRAVA_CLIENT_SECRET, refresh_token: STRAVA_REFRESH_TOKEN, grant_type: 'refresh_token' }) });
+            const tokenData = await tokenResponse.json(); const accessToken = tokenData.access_token;
+            if(!accessToken) throw new Error("Falha na autenticação do Strava.");
+            const activitiesResponse = await fetch(`https://www.strava.com/api/v3/athlete/activities?per_page=1`, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+            const activities = await activitiesResponse.json();
+            if (activities && activities.length > 0) processStravaActivity(activities[0]);
+            else { showToast("Nenhuma atividade recente encontrada no Strava.", "var(--iron-gold)"); jarvisSpeak("Não localizei nenhuma telemetria recente nos servidores do Strava, senhor."); }
+        } catch (error) { console.error("Erro Strava API:", error); showToast("Falha na comunicação com o Strava.", "var(--iron-red)"); }
+    }
+
+    function processStravaActivity(activity) {
+        const distanceKm = (activity.distance / 1000).toFixed(2), distanceM = activity.distance.toFixed(0), timeMin = Math.round(activity.moving_time / 60);
+        document.getElementById('in-swim').value = ""; document.getElementById('in-swim-time').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-bike-time').value = ""; document.getElementById('in-run').value = ""; document.getElementById('in-run-time').value = "";
+        let sportName = "";
+        if (activity.type === 'Ride' || activity.type === 'VirtualRide') { document.getElementById('in-bike').value = distanceKm; document.getElementById('in-bike-time').value = timeMin; sportName = "Ciclismo"; } 
+        else if (activity.type === 'Run' || activity.type === 'VirtualRun') { document.getElementById('in-run').value = distanceKm; document.getElementById('in-run-time').value = timeMin; sportName = "Corrida"; } 
+        else if (activity.type === 'Swim') { document.getElementById('in-swim').value = distanceM; document.getElementById('in-swim-time').value = timeMin; sportName = "Natação"; } 
+        else { showToast(`Esporte não suportado: ${activity.type}`, "var(--iron-gold)"); return; }
+
+        showToast(`Dados de ${sportName} importados do Strava! Salve o treino.`, "var(--iron-blue)"); jarvisSpeak(`Download de telemetria concluído. Atividade de ${sportName} detetada e carregada no painel, senhor.`);
+        const wrapper = document.getElementById('log-inputs-wrapper'); const icon = document.getElementById('log-icon');
+        if (wrapper.classList.contains('collapsed')) { wrapper.classList.remove('collapsed'); icon.classList.remove('collapsed'); }
+    }
+
     // --- GERADOR DE SOM (WEB AUDIO API) ---
     function playBootSound() {
         try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            
-            osc.type = 'sawtooth'; // Som mais metálico/mecânico
-            // Varredura de frequência (Energização)
-            osc.frequency.setValueAtTime(50, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.6);
-            
-            // Controle de volume para o som não estourar
-            gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-            
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            
-            osc.start();
-            osc.stop(ctx.currentTime + 1);
-        } catch(e) {
-            console.log("Áudio de boot bloqueado pelas políticas do navegador.");
-        }
+            const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
+            const ctx = new AudioContext(), osc = ctx.createOscillator(), gain = ctx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(50, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.6);
+            gain.gain.setValueAtTime(0, ctx.currentTime); gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+            osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 1);
+        } catch(e) {}
     }
 
-    // --- PROTOCOLO DE ABERTURA DA ARMADURA ---
     window.addEventListener('load', () => {
-        const startupScreen = document.getElementById('startup-screen');
-        
-        // Tenta tocar o som mecânico de energia subindo
-        playBootSound();
-
-        // 1. Acende a luz do visor
-        setTimeout(() => { startupScreen.classList.add('startup-screen-active'); }, 200);
-
-        // 2. Abre a tela (visor)
-        setTimeout(() => { startupScreen.classList.add('startup-screen-open'); }, 800);
-
-        // 3. Remove a tela de boot do caminho para não atrapalhar os cliques
-        setTimeout(() => { startupScreen.remove(); }, 1800);
+        const startupScreen = document.getElementById('startup-screen'); playBootSound();
+        setTimeout(() => { startupScreen.classList.add('startup-screen-active'); }, 200); setTimeout(() => { startupScreen.classList.add('startup-screen-open'); }, 800); setTimeout(() => { startupScreen.remove(); }, 1800);
     });
 
-
-    // --- CONFIGURAÇÃO ---
     const phasesConfig = [
         { id: 1, name: "Fase 1: Construção da Base (Meses 1-3)", goals: { swim: 24000, bike: 600, run: 120 }, plan: { obj: "Sair do zero sem lesões.", swim: "2x semana\nFoco: Aprender a respirar.", bike: "1-2x semana (40-60min)\nLeve.", run: "2-3x semana (30min)\nCaminhada -> Trote.", gym: "2x semana\nObrigatório." } },
         { id: 2, name: "Fase 2: Resistência Real (Meses 4-6)", goals: { swim: 36000, bike: 1200, run: 300 }, plan: { obj: "Começa a ficar sério.", swim: "1.500–2.000 m/sessão.", bike: "60–90 min.", run: "5–8 km confortáveis.", gym: "1 treino combinado." } },
@@ -564,20 +565,14 @@
 
     let appState = JSON.parse(localStorage.getItem('ironmanState')) || {};
     
-    // Migração Segura e Setup Inicial
-    if(appState.phaseIndex === undefined) appState.phaseIndex = 0;
-    if(!appState.data) appState.data = { swim: 0, bike: 0, run: 0 };
-    if(!appState.totalAccumulated) appState.totalAccumulated = { swim: 0, bike: 0, run: 0 };
-    if(!appState.gear) appState.gear = { shoes:0, chain:0 };
+    if(appState.phaseIndex === undefined) appState.phaseIndex = 0; if(!appState.data) appState.data = { swim: 0, bike: 0, run: 0 };
+    if(!appState.totalAccumulated) appState.totalAccumulated = { swim: 0, bike: 0, run: 0 }; if(!appState.gear) appState.gear = { shoes:0, chain:0 };
     if(!appState.health) appState.health = { name: "Rodrigo", sex: "M", weight: 105, height: 190, fat: 0, age: 43 };
-    if(!appState.health.name) appState.health.name = "Rodrigo";
-    if(!appState.health.sex) appState.health.sex = "M";
-    if(!appState.phaseStartDate) appState.phaseStartDate = new Date().toISOString();
-    if(!appState.logs) appState.logs = []; // Histórico
-    if(appState.settings === undefined) appState.settings = { voice: true }; // Conf. Voz
+    if(!appState.health.name) appState.health.name = "Rodrigo"; if(!appState.health.sex) appState.health.sex = "M";
+    if(!appState.phaseStartDate) appState.phaseStartDate = new Date().toISOString(); if(!appState.logs) appState.logs = [];
+    if(appState.settings === undefined) appState.settings = { voice: true };
     
-    let currentCompareMode = '70.3';
-    let currentVolumeLevel = 1;
+    let currentCompareMode = '70.3', currentVolumeLevel = 1;
 
     function init() {
         updateUI(); startCountdown(); updateGearUI(); updateHealthUI();
@@ -586,230 +581,102 @@
         document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
         renderTips();
 
-        // J.A.R.V.I.S. Saudação e Alerta Inicial (Apenas uma vez por sessão)
         if(!sessionStorage.getItem('jarvisWelcomed')) {
             sessionStorage.setItem('jarvisWelcomed', 'true');
-            
-            // Lógica mais inteligente para ler a data do último treino ou do início da fase
             let referenceDate = new Date(appState.phaseStartDate);
-            if(appState.logs && appState.logs.length > 0) {
-                referenceDate = new Date(appState.logs[0].date);
-            }
+            if(appState.logs && appState.logs.length > 0) referenceDate = new Date(appState.logs[0].date);
             const diffDays = Math.floor((new Date() - referenceDate) / (1000 * 60 * 60 * 24));
             
-            // Atraso de 2.5s para esperar a animação do visor terminar antes de falar
             if(diffDays >= 7) setTimeout(() => jarvisSpeak(`Atenção, alerta crítico senhor. Sem treinos registados há ${diffDays} dias. O condicionamento está em risco.`), 2500);
             else if(diffDays >= 3) setTimeout(() => jarvisSpeak(`Aviso, senhor. Já se passaram ${diffDays} dias desde o último treino.`), 2500);
             else setTimeout(() => jarvisSpeak("Sistemas online. Bem-vindo de volta, senhor."), 2500);
         }
     }
 
-    // --- SISTEMA TOAST E VOZ (J.A.R.V.I.S) ---
     function showToast(message, color="var(--iron-green)") {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.style.borderLeft = `4px solid ${color}`;
-        toast.innerHTML = message;
-        container.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        const container = document.getElementById('toast-container'), toast = document.createElement('div');
+        toast.className = 'toast'; toast.style.borderLeft = `4px solid ${color}`; toast.innerHTML = message;
+        container.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
-
     function jarvisSpeak(text) {
         if(!appState.settings.voice || !window.speechSynthesis) return;
-        const synth = window.speechSynthesis;
-        if(synth.speaking) synth.cancel();
-        const ut = new SpeechSynthesisUtterance(text);
-        ut.lang = 'pt-BR'; ut.rate = 1.0; ut.pitch = 0.9;
-        synth.speak(ut);
+        const synth = window.speechSynthesis; if(synth.speaking) synth.cancel();
+        const ut = new SpeechSynthesisUtterance(text); ut.lang = 'pt-BR'; ut.rate = 1.0; ut.pitch = 0.9; synth.speak(ut);
     }
-
     function toggleVoice() {
-        appState.settings.voice = !appState.settings.voice;
-        saveState();
-        document.getElementById('btn-voice-toggle').innerText = appState.settings.voice ? "LIGADO" : "DESLIGADO";
-        document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
+        appState.settings.voice = !appState.settings.voice; saveState();
+        document.getElementById('btn-voice-toggle').innerText = appState.settings.voice ? "LIGADO" : "DESLIGADO"; document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
         if(appState.settings.voice) jarvisSpeak("Sistemas de voz online, senhor.");
     }
+    function toggleLog() { const wrapper = document.getElementById('log-inputs-wrapper'); const icon = document.getElementById('log-icon'); wrapper.classList.toggle('collapsed'); icon.classList.toggle('collapsed'); }
 
-    // --- PAINEL RETRÁTIL ---
-    function toggleLog() {
-        const wrapper = document.getElementById('log-inputs-wrapper');
-        const icon = document.getElementById('log-icon');
-        
-        wrapper.classList.toggle('collapsed');
-        icon.classList.toggle('collapsed');
-    }
-
-    // --- ALERTA DE OCIOSIDADE ---
     function checkIdleAlert() {
-        const alertBox = document.getElementById('jarvis-idle-alert');
-        const msgBox = document.getElementById('jarvis-idle-msg');
-        const headerText = document.querySelector('#jarvis-idle-alert h4');
-        
-        // Verifica a data baseando-se no histórico ou na data inicial do app
+        const alertBox = document.getElementById('jarvis-idle-alert'), msgBox = document.getElementById('jarvis-idle-msg'), headerText = document.querySelector('#jarvis-idle-alert h4');
         let referenceDate = new Date(appState.phaseStartDate);
-        if(appState.logs && appState.logs.length > 0) {
-            referenceDate = new Date(appState.logs[0].date);
-        }
+        if(appState.logs && appState.logs.length > 0) referenceDate = new Date(appState.logs[0].date);
+        const diffDays = Math.floor((new Date() - referenceDate) / (1000 * 60 * 60 * 24));
 
-        const today = new Date();
-        const diffDays = Math.floor((today - referenceDate) / (1000 * 60 * 60 * 24));
-
-        if(diffDays >= 7) {
-            alertBox.style.display = 'block';
-            alertBox.style.borderLeftColor = 'var(--iron-red)';
-            alertBox.style.background = 'rgba(225, 6, 0, 0.1)';
-            headerText.style.color = 'var(--iron-red)';
-            msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não detecto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural. Recomendo ação imediata.`;
-        } else if(diffDays >= 3) {
-            alertBox.style.display = 'block';
-            alertBox.style.borderLeftColor = 'var(--iron-gold)';
-            alertBox.style.background = 'rgba(255, 206, 0, 0.1)';
-            headerText.style.color = 'var(--iron-gold)';
-            msgBox.innerHTML = `<strong style="color:var(--iron-gold)">ATENÇÃO:</strong> Já se passaram ${diffDays} dias desde a sua última sessão. Lembre-se, a consistência é vital.`;
-        } else {
-            alertBox.style.display = 'none';
-        }
+        if(diffDays >= 7) { alertBox.style.display = 'block'; alertBox.style.borderLeftColor = 'var(--iron-red)'; alertBox.style.background = 'rgba(225, 6, 0, 0.1)'; headerText.style.color = 'var(--iron-red)'; msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não detecto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural.`; } 
+        else if(diffDays >= 3) { alertBox.style.display = 'block'; alertBox.style.borderLeftColor = 'var(--iron-gold)'; alertBox.style.background = 'rgba(255, 206, 0, 0.1)'; headerText.style.color = 'var(--iron-gold)'; msgBox.innerHTML = `<strong style="color:var(--iron-gold)">ATENÇÃO:</strong> Já se passaram ${diffDays} dias desde a sua última sessão. Lembre-se, a consistência é vital.`; } 
+        else { alertBox.style.display = 'none'; }
     }
 
-    // --- GPX READER ---
-    function handleGPXUpload(input) {
-        if (input.files.length > 0) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) { processGPX(e.target.result); };
-            reader.readAsText(file);
-        }
-    }
-
+    function handleGPXUpload(input) { if (input.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processGPX(e.target.result); }; reader.readAsText(input.files[0]); } }
     function processGPX(gpxContent) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(gpxContent, "text/xml");
-        const trkpts = xmlDoc.getElementsByTagName("trkpt");
+        const xmlDoc = new DOMParser().parseFromString(gpxContent, "text/xml"), trkpts = xmlDoc.getElementsByTagName("trkpt");
         if (trkpts.length < 2) { showToast("Ficheiro GPX inválido.", "var(--iron-red)"); return; }
-        
         let totalDistKm = 0;
-        for (let i = 0; i < trkpts.length - 1; i++) {
-            const lat1 = parseFloat(trkpts[i].getAttribute("lat"));
-            const lon1 = parseFloat(trkpts[i].getAttribute("lon"));
-            const lat2 = parseFloat(trkpts[i+1].getAttribute("lat"));
-            const lon2 = parseFloat(trkpts[i+1].getAttribute("lon"));
-            totalDistKm += getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
-        }
-
+        for (let i = 0; i < trkpts.length - 1; i++) totalDistKm += getDistanceFromLatLonInKm(parseFloat(trkpts[i].getAttribute("lat")), parseFloat(trkpts[i].getAttribute("lon")), parseFloat(trkpts[i+1].getAttribute("lat")), parseFloat(trkpts[i+1].getAttribute("lon")));
         const confirmDist = totalDistKm.toFixed(2);
         if(confirm(`Distância detetada: ${confirmDist} km.\nOnde deseja adicionar?\n1 = Nat, 2 = Bike, 3 = Corrida`)) {
-             let sport = prompt("Digite 1, 2 ou 3", "3");
-             document.getElementById('in-swim').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-run').value = "";
-             if(sport === "1") document.getElementById('in-swim').value = (totalDistKm * 1000).toFixed(0);
-             if(sport === "2") document.getElementById('in-bike').value = confirmDist;
-             if(sport === "3") document.getElementById('in-run').value = confirmDist;
+             let sport = prompt("Digite 1, 2 ou 3", "3"); document.getElementById('in-swim').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-run').value = "";
+             if(sport === "1") document.getElementById('in-swim').value = (totalDistKm * 1000).toFixed(0); if(sport === "2") document.getElementById('in-bike').value = confirmDist; if(sport === "3") document.getElementById('in-run').value = confirmDist;
              showToast("Campos preenchidos! Salve o treino.", "var(--iron-blue)");
-             
-             // Força a expansão do painel caso ele esteja escondido
-             const wrapper = document.getElementById('log-inputs-wrapper');
-             const icon = document.getElementById('log-icon');
-             if (wrapper.classList.contains('collapsed')) {
-                 wrapper.classList.remove('collapsed');
-                 icon.classList.remove('collapsed');
-             }
+             const wrapper = document.getElementById('log-inputs-wrapper'); if (wrapper.classList.contains('collapsed')) { wrapper.classList.remove('collapsed'); document.getElementById('log-icon').classList.remove('collapsed'); }
         }
     }
-
     function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-        var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); 
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+        var R = 6371; var dLat = (lat2-lat1)*(Math.PI/180); var dLon = (lon2-lon1)*(Math.PI/180); 
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*(Math.PI/180)) * Math.cos(lat2*(Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
         return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
     }
-    function deg2rad(deg) { return deg * (Math.PI/180); }
 
-    // --- FUNÇÕES PRINCIPAIS (COM HISTÓRICO E PACE) ---
     function updateRPEText(val) {
-        const labels = ["","Muito Leve","Leve","Leve","Moderado","Moderado","Forte","Forte","Muito Forte","Exaustão","Máxima"];
-        const colors = ["","#0f8","#0f8","#0f8","#fc0","#fc0","#f60","#f60","#f33","#f00","#f00"];
-        document.getElementById('rpe-text').innerText = `${labels[val]} (${val})`;
-        document.getElementById('rpe-text').style.color = colors[val];
+        const labels = ["","Muito Leve","Leve","Leve","Moderado","Moderado","Forte","Forte","Muito Forte","Exaustão","Máxima"], colors = ["","#0f8","#0f8","#0f8","#fc0","#fc0","#f60","#f60","#f33","#f00","#f00"];
+        document.getElementById('rpe-text').innerText = `${labels[val]} (${val})`; document.getElementById('rpe-text').style.color = colors[val];
     }
 
     function addTraining() {
-        const s = parseFloat(document.getElementById('in-swim').value)||0;
-        const st = parseFloat(document.getElementById('in-swim-time').value)||0;
-        const b = parseFloat(document.getElementById('in-bike').value)||0;
-        const bt = parseFloat(document.getElementById('in-bike-time').value)||0;
-        const r = parseFloat(document.getElementById('in-run').value)||0;
-        const rt = parseFloat(document.getElementById('in-run-time').value)||0;
+        const s = parseFloat(document.getElementById('in-swim').value)||0, st = parseFloat(document.getElementById('in-swim-time').value)||0;
+        const b = parseFloat(document.getElementById('in-bike').value)||0, bt = parseFloat(document.getElementById('in-bike-time').value)||0;
+        const r = parseFloat(document.getElementById('in-run').value)||0, rt = parseFloat(document.getElementById('in-run-time').value)||0;
         const rpe = document.getElementById('rpe-input').value;
 
         if(s===0 && b===0 && r===0) { showToast("Preencha ao menos uma distância.", "var(--iron-red)"); jarvisSpeak("Senhor, não detetei nenhum movimento de treino."); return; }
         
         let logEntry = { date: new Date().toISOString(), text: [], rpe: rpe };
+        if(s > 0) { let pace = (st>0)?` (${Math.floor(st/(s/100))}:${Math.round((st/(s/100)-Math.floor(st/(s/100)))*60).toString().padStart(2,'0')}/100m)`:""; logEntry.text.push(`🏊 ${s}m${pace}`); }
+        if(b > 0) { let pace = (bt>0)?` (${(b/(bt/60)).toFixed(1)} km/h)`:""; logEntry.text.push(`🚴 ${b}km${pace}`); }
+        if(r > 0) { let pace = (rt>0)?` (${Math.floor(rt/r)}:${Math.round((rt/r-Math.floor(rt/r))*60).toString().padStart(2,'0')}/km)`:""; logEntry.text.push(`🏃 ${r}km${pace}`); }
 
-        if(s > 0) {
-            let paceInfo = "";
-            if(st > 0) {
-                let p100 = st / (s/100); let min = Math.floor(p100); let sec = Math.round((p100-min)*60);
-                paceInfo = ` (${min}:${sec<10?'0':''}${sec}/100m)`;
-            }
-            logEntry.text.push(`🏊 ${s}m${paceInfo}`);
-        }
-        if(b > 0) {
-            let spdInfo = "";
-            if(bt > 0) spdInfo = ` (${(b / (bt/60)).toFixed(1)} km/h)`;
-            logEntry.text.push(`🚴 ${b}km${spdInfo}`);
-        }
-        if(r > 0) {
-            let paceInfo = "";
-            if(rt > 0) {
-                let pKm = rt / r; let min = Math.floor(pKm); let sec = Math.round((pKm-min)*60);
-                paceInfo = ` (${min}:${sec<10?'0':''}${sec}/km)`;
-            }
-            logEntry.text.push(`🏃 ${r}km${paceInfo}`);
-        }
-
-        appState.logs.unshift(logEntry);
-        if(appState.logs.length > 10) appState.logs.pop();
-
-        appState.data.swim += s; appState.data.bike += b; appState.data.run += r;
-        appState.totalAccumulated.swim += s; appState.totalAccumulated.bike += b; appState.totalAccumulated.run += r;
-        appState.gear.shoes += r; appState.gear.chain += b;
+        appState.logs.unshift(logEntry); if(appState.logs.length > 10) appState.logs.pop();
+        appState.data.swim += s; appState.data.bike += b; appState.data.run += r; appState.totalAccumulated.swim += s; appState.totalAccumulated.bike += b; appState.totalAccumulated.run += r; appState.gear.shoes += r; appState.gear.chain += b;
         
-        let gearAlert = appState.gear.shoes >= 800;
-
-        saveState(); updateUI(); updateGearUI();
-        if(document.getElementById('volumeModal').style.display === 'flex') updateVolumeUI();
-        
+        saveState(); updateUI(); updateGearUI(); if(document.getElementById('volumeModal').style.display === 'flex') updateVolumeUI();
         ['in-swim','in-swim-time','in-bike','in-bike-time','in-run','in-run-time','gpx-input'].forEach(id => document.getElementById(id).value = '');
 
-        showToast("Sessão salva na base de dados.", "var(--iron-green)");
-        if(gearAlert) {
-            jarvisSpeak("Treino registado, senhor. Mas atenção, a integridade do seu calçado está comprometida. Recomendada troca de ténis.");
-            showToast("⚠ Ténis excedeu o limite de uso!", "var(--iron-red)");
-        } else {
-            jarvisSpeak("Treino atualizado com sucesso, senhor.");
-        }
-
-        // Recolhe o painel automaticamente após salvar
-        const wrapper = document.getElementById('log-inputs-wrapper');
-        const icon = document.getElementById('log-icon');
-        if (!wrapper.classList.contains('collapsed')) {
-            wrapper.classList.add('collapsed');
-            icon.classList.add('collapsed');
-        }
+        if(appState.gear.shoes >= 800) { jarvisSpeak("Treino registado, mas atenção: integridade do seu calçado comprometida."); showToast("⚠ Ténis excedeu o limite!", "var(--iron-red)"); } 
+        else { jarvisSpeak("Treino atualizado com sucesso, senhor."); showToast("Sessão salva na base de dados.", "var(--iron-green)"); }
+        const wrapper = document.getElementById('log-inputs-wrapper'); if (!wrapper.classList.contains('collapsed')) { wrapper.classList.add('collapsed'); document.getElementById('log-icon').classList.add('collapsed'); }
     }
 
     function openLogsModal() {
         const c = document.getElementById('logs-container');
-        if(!appState.logs || appState.logs.length === 0) {
-            c.innerHTML = "<p style='color:#888; font-size:0.9rem;'>Nenhum registo recente.</p>";
-        } else {
+        if(!appState.logs || appState.logs.length === 0) c.innerHTML = "<p style='color:#888; font-size:0.9rem;'>Nenhum registo recente.</p>";
+        else {
             c.innerHTML = appState.logs.map(log => {
-                const d = new Date(log.date);
-                const ds = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} às ${d.getHours()}:${d.getMinutes()<10?'0':''}${d.getMinutes()}`;
-                return `<div class="log-item">
-                    <div class="log-date"><span>${ds}</span><span>RPE: ${log.rpe}/10</span></div>
-                    <div class="log-details">${log.text.join(' <span style="color:#666">|</span> ')}</div>
-                </div>`;
+                const d = new Date(log.date), ds = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} às ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+                return `<div class="log-item"><div class="log-date"><span>${ds}</span><span>RPE: ${log.rpe}/10</span></div><div class="log-details">${log.text.join(' <span style="color:#666">|</span> ')}</div></div>`;
             }).join('');
         }
         openModal('logsModal');
@@ -818,292 +685,152 @@
     function saveState() { localStorage.setItem('ironmanState', JSON.stringify(appState)); }
     
     function updateUI() {
-        const p = phasesConfig[appState.phaseIndex];
-        document.getElementById('phase-badge').innerText = p.name.split(':')[0];
-        
-        const startDate = new Date(appState.phaseStartDate);
-        const elapsedDays = Math.max(0, (new Date() - startDate) / (1000 * 60 * 60 * 24));
-        const phaseProgressRatio = Math.min(elapsedDays / 90, 1); 
-
-        // Atualiza e verifica ociodade
+        const p = phasesConfig[appState.phaseIndex]; document.getElementById('phase-badge').innerText = p.name.split(':')[0];
+        const phaseProgressRatio = Math.min(Math.max(0, (new Date() - new Date(appState.phaseStartDate)) / (1000 * 60 * 60 * 24)) / 90, 1); 
         checkIdleAlert();
 
         ['swim','bike','run'].forEach(mode => {
-            const val = appState.data[mode];
-            const goal = p.goals[mode];
-            const expected = goal * phaseProgressRatio;
-            
-            document.getElementById(`val-${mode}`).innerText = val;
-            document.getElementById(`goal-${mode}`).innerText = goal;
-            
-            const pctAtual = Math.min((val/goal)*100, 100);
-            const pctEsperado = Math.min((expected/goal)*100, 100);
-            
-            const bar = document.getElementById(`bar-${mode}`);
-            const ghost = document.getElementById(`ghost-${mode}`);
+            const val = appState.data[mode], goal = p.goals[mode], expected = goal * phaseProgressRatio;
+            document.getElementById(`val-${mode}`).innerText = val; document.getElementById(`goal-${mode}`).innerText = goal;
+            document.getElementById(`bar-${mode}`).style.width = Math.min((val/goal)*100, 100) + '%'; document.getElementById(`ghost-${mode}`).style.left = Math.min((expected/goal)*100, 100) + '%';
             const statusText = document.getElementById(`status-${mode}`);
-            
-            bar.style.width = pctAtual + '%';
-            ghost.style.left = pctEsperado + '%';
-            
-            const diff = val - expected;
-            if (val >= expected) {
-                bar.style.background = 'var(--iron-green)';
-                statusText.innerText = `▲ +${Math.abs(diff).toFixed(0)} (Na meta)`;
-                statusText.className = 'status-text status-positive';
-            } else {
-                bar.style.background = 'var(--iron-red)';
-                statusText.innerText = `▼ -${Math.abs(diff).toFixed(0)} (Atrasado)`;
-                statusText.className = 'status-text status-negative';
-            }
+            if (val >= expected) { document.getElementById(`bar-${mode}`).style.background = 'var(--iron-green)'; statusText.innerText = `▲ +${Math.abs(val - expected).toFixed(0)} (Na meta)`; statusText.className = 'status-text status-positive'; } 
+            else { document.getElementById(`bar-${mode}`).style.background = 'var(--iron-red)'; statusText.innerText = `▼ -${Math.abs(val - expected).toFixed(0)} (Atrasado)`; statusText.className = 'status-text status-negative'; }
         });
     }
 
-    // --- SAÚDE / HEALTH ---
     function saveHealthData() {
-        appState.health.name = document.getElementById('health-name').value || "Rodrigo";
-        appState.health.sex = document.getElementById('health-sex').value;
-        appState.health.weight = parseFloat(document.getElementById('health-weight').value) || appState.health.weight;
-        appState.health.height = parseFloat(document.getElementById('health-height').value) || appState.health.height;
-        appState.health.age = parseFloat(document.getElementById('health-age').value) || appState.health.age;
-
-        let inputFatStr = document.getElementById('health-fat').value;
-        let inputFat = parseFloat(inputFatStr);
-        
-        if (!inputFatStr || isNaN(inputFat) || inputFat === 0) {
-            const hM = appState.health.height / 100;
-            const imc = appState.health.weight / (hM * hM);
-            const sexFactor = appState.health.sex === 'M' ? 1 : 0;
-            let calcFat = (1.20 * imc) + (0.23 * appState.health.age) - (10.8 * sexFactor) - 5.4;
-            appState.health.fat = parseFloat(Math.max(calcFat, 3).toFixed(1)); 
-        } else {
-            appState.health.fat = inputFat;
-        }
-
-        saveState(); updateHealthUI(); closeModal('healthModal');
-        showToast("Biometria atualizada.", "var(--vital-main)");
+        appState.health.name = document.getElementById('health-name').value || "Rodrigo"; appState.health.sex = document.getElementById('health-sex').value;
+        appState.health.weight = parseFloat(document.getElementById('health-weight').value) || appState.health.weight; appState.health.height = parseFloat(document.getElementById('health-height').value) || appState.health.height; appState.health.age = parseFloat(document.getElementById('health-age').value) || appState.health.age;
+        let inputFat = parseFloat(document.getElementById('health-fat').value);
+        if (!inputFat || isNaN(inputFat) || inputFat === 0) {
+            const imc = appState.health.weight / Math.pow(appState.health.height/100, 2); appState.health.fat = parseFloat(Math.max((1.20 * imc) + (0.23 * appState.health.age) - (10.8 * (appState.health.sex === 'M' ? 1 : 0)) - 5.4, 3).toFixed(1)); 
+        } else appState.health.fat = inputFat;
+        saveState(); updateHealthUI(); closeModal('healthModal'); showToast("Biometria atualizada.", "var(--vital-main)");
     }
 
     function updateHealthUI() {
-        document.getElementById('health-name').value = appState.health.name;
-        document.getElementById('health-sex').value = appState.health.sex;
-        document.getElementById('health-weight').value = appState.health.weight;
-        document.getElementById('health-height').value = appState.health.height;
-        document.getElementById('health-fat').value = appState.health.fat;
-        document.getElementById('health-age').value = appState.health.age;
-
-        document.getElementById('val-weight').innerText = appState.health.weight;
-        document.getElementById('val-fat').innerText = appState.health.fat > 0 ? appState.health.fat : "--";
-        document.getElementById('display-health-age').innerText = appState.health.age;
-
-        document.getElementById('display-health-name').innerText = appState.health.name ? `Sinais Vitais: ${appState.health.name.split(' ')[0]}` : "Sinais Vitais";
+        document.getElementById('health-name').value = appState.health.name; document.getElementById('health-sex').value = appState.health.sex;
+        document.getElementById('health-weight').value = appState.health.weight; document.getElementById('health-height').value = appState.health.height;
+        document.getElementById('health-fat').value = appState.health.fat; document.getElementById('health-age').value = appState.health.age;
+        document.getElementById('val-weight').innerText = appState.health.weight; document.getElementById('val-fat').innerText = appState.health.fat > 0 ? appState.health.fat : "--";
+        document.getElementById('display-health-age').innerText = appState.health.age; document.getElementById('display-health-name').innerText = appState.health.name ? `Sinais Vitais: ${appState.health.name.split(' ')[0]}` : "Sinais Vitais";
 
         const root = document.documentElement;
-        if(appState.health.sex === 'F') {
-            root.style.setProperty('--vital-main', '#ff00ba');
-            root.style.setProperty('--vital-bg', 'rgba(255, 0, 186, 0.1)');
-            root.style.setProperty('--vital-shadow', 'rgba(255, 0, 186, 0.3)');
-            document.getElementById('health-icon').innerText = "🩷";
-        } else {
-            root.style.setProperty('--vital-main', '#00c3ff');
-            root.style.setProperty('--vital-bg', 'rgba(0, 195, 255, 0.1)');
-            root.style.setProperty('--vital-shadow', 'rgba(0, 195, 255, 0.3)');
-            document.getElementById('health-icon').innerText = "🔵";
-        }
+        if(appState.health.sex === 'F') { root.style.setProperty('--vital-main', '#ff00ba'); root.style.setProperty('--vital-bg', 'rgba(255, 0, 186, 0.1)'); root.style.setProperty('--vital-shadow', 'rgba(255, 0, 186, 0.3)'); document.getElementById('health-icon').innerText = "🩷"; } 
+        else { root.style.setProperty('--vital-main', '#00c3ff'); root.style.setProperty('--vital-bg', 'rgba(0, 195, 255, 0.1)'); root.style.setProperty('--vital-shadow', 'rgba(0, 195, 255, 0.3)'); document.getElementById('health-icon').innerText = "🔵"; }
 
-        const hM = appState.health.height / 100;
-        const imc = (appState.health.weight / (hM * hM)).toFixed(1);
-        
-        let bmr = 0;
-        if(appState.health.sex === 'F') { bmr = Math.round(447.59 + (9.24 * appState.health.weight) + (3.09 * appState.health.height) - (4.33 * appState.health.age)); } 
-        else { bmr = Math.round(88.36 + (13.4 * appState.health.weight) + (4.8 * appState.health.height) - (5.7 * appState.health.age)); }
-
-        document.getElementById('calc-imc').innerText = imc;
-        document.getElementById('calc-bmr').innerText = bmr + " kcal/dia";
-
-        let status = "Normal";
-        if(imc < 18.5) status = "Baixo Peso"; else if(imc >= 25 && imc < 29.9) status = "Sobrepeso"; else if(imc >= 30) status = "Obesidade";
-        
-        const statusEl = document.getElementById('display-bmi-status');
-        statusEl.innerText = `IMC ${imc} (${status})`;
+        const imc = (appState.health.weight / Math.pow(appState.health.height/100, 2)).toFixed(1), bmr = Math.round(appState.health.sex === 'F' ? 447.59 + (9.24 * appState.health.weight) + (3.09 * appState.health.height) - (4.33 * appState.health.age) : 88.36 + (13.4 * appState.health.weight) + (4.8 * appState.health.height) - (5.7 * appState.health.age));
+        document.getElementById('calc-imc').innerText = imc; document.getElementById('calc-bmr').innerText = bmr + " kcal/dia";
+        const statusEl = document.getElementById('display-bmi-status'); statusEl.innerText = `IMC ${imc} (${imc < 18.5 ? "Baixo Peso" : imc >= 30 ? "Obesidade" : imc >= 25 ? "Sobrepeso" : "Normal"})`;
         statusEl.style.color = (imc >= 25 || imc < 18.5) ? (imc >= 30 ? "var(--iron-red)" : "var(--iron-gold)") : "var(--iron-green)";
     }
 
-    // --- METAS ANUAIS ---
     function setVolumeLevel(level) {
-        currentVolumeLevel = level;
-        document.querySelectorAll('.level-tab').forEach(el => el.classList.remove('active'));
-        document.querySelector(`.level-tab.lvl-${level}`).classList.add('active');
-        updateVolumeUI();
+        currentVolumeLevel = level; document.querySelectorAll('.level-tab').forEach(el => el.classList.remove('active'));
+        document.querySelector(`.level-tab.lvl-${level}`).classList.add('active'); updateVolumeUI();
     }
     function updateVolumeUI() {
-        const target = annualTargets[currentVolumeLevel]; const totals = appState.totalAccumulated;
-        const badge = document.getElementById('lvl-badge');
-        badge.innerHTML = `<h3 style="color:${target.color}">${target.name.toUpperCase()}</h3><p>${target.desc}</p>`;
-        badge.style.borderLeft = `3px solid ${target.color}`;
-        renderGameBar('swim', totals.swim, target.swim, target.color, 'm');
-        renderGameBar('bike', totals.bike, target.bike, target.color, 'km');
-        renderGameBar('run', totals.run, target.run, target.color, 'km');
+        const target = annualTargets[currentVolumeLevel], totals = appState.totalAccumulated, badge = document.getElementById('lvl-badge');
+        badge.innerHTML = `<h3 style="color:${target.color}">${target.name.toUpperCase()}</h3><p>${target.desc}</p>`; badge.style.borderLeft = `3px solid ${target.color}`;
+        ['swim','bike','run'].forEach(t => renderGameBar(t, totals[t], target[t], target.color));
     }
-    function renderGameBar(type, current, target, color, unit) {
+    function renderGameBar(type, current, target, color) {
         const pct = Math.min((current / target) * 100, 100).toFixed(1);
-        const bar = document.getElementById(`game-bar-${type}`);
-        bar.style.width = pct + '%'; bar.style.backgroundColor = color;
-        document.getElementById(`game-${type}-curr`).innerText = current.toLocaleString('pt-BR');
-        document.getElementById(`game-${type}-target`).innerText = target.toLocaleString('pt-BR');
-        document.getElementById(`game-${type}-pct`).innerText = pct >= 100 ? "🏅 META ATINGIDA!" : `${pct}%`;
+        document.getElementById(`game-bar-${type}`).style.width = pct + '%'; document.getElementById(`game-bar-${type}`).style.backgroundColor = color;
+        document.getElementById(`game-${type}-curr`).innerText = current.toLocaleString('pt-BR'); document.getElementById(`game-${type}-target`).innerText = target.toLocaleString('pt-BR'); document.getElementById(`game-${type}-pct`).innerText = pct >= 100 ? "🏅 META ATINGIDA!" : `${pct}%`;
     }
 
-    // --- MANUTENÇÃO ---
-    function factoryReset() { 
-        if(confirm("⚠ AVISO CRÍTICO: Isto irá apagar todo o seu progresso.\nContinuar?")) { 
-            localStorage.removeItem('ironmanState'); 
-            location.reload(); 
-        } 
-    }
+    function factoryReset() { if(confirm("⚠ AVISO CRÍTICO: Isto irá apagar todo o seu progresso.\nContinuar?")) { localStorage.removeItem('ironmanState'); location.reload(); } }
     
-    // --- NUTRIÇÃO ---
     function calculateNutrition() {
         const w = parseFloat(document.getElementById('nutri-weight').value), h = parseFloat(document.getElementById('nutri-hours').value);
         if(!w || !h) { showToast("Preencha os campos para o cálculo.", "var(--iron-red)"); return; }
-        const totalCarbs = Math.round(60 * h);
-        document.getElementById('nutri-result').style.display = 'block';
-        document.getElementById('nutri-grams').innerText = totalCarbs + "g Carbo";
+        const totalCarbs = Math.round(60 * h); document.getElementById('nutri-result').style.display = 'block'; document.getElementById('nutri-grams').innerText = totalCarbs + "g Carbo";
         document.getElementById('nutri-breakdown').innerHTML = `<li>~ ${Math.floor(totalCarbs / 22)} Géis</li><li>~ ${Math.round((totalCarbs % 22) / 30)} Garrafas Iso</li><li>Ou ${Math.round(totalCarbs/25)} Bananinhas</li>`;
     }
 
-    // --- COMPARAÇÃO ---
-    function setCompareMode(mode) {
-        currentCompareMode = mode;
-        document.getElementById('btn-703').className = mode === '70.3' ? 'toggle-btn active' : 'toggle-btn';
-        document.getElementById('btn-full').className = mode === 'Full' ? 'toggle-btn active' : 'toggle-btn';
-        renderTips();
-    }
+    function setCompareMode(mode) { currentCompareMode = mode; document.getElementById('btn-703').className = mode === '70.3' ? 'toggle-btn active' : 'toggle-btn'; document.getElementById('btn-full').className = mode === 'Full' ? 'toggle-btn active' : 'toggle-btn'; renderTips(); }
     function comparePerformance() {
-        let tSwim = 90, tBike = 40, tRun = 225;
-        if(currentCompareMode === 'Full') { tSwim = 95; tBike = 36; tRun = 270; }
-        const uSwim = (parseFloat(document.getElementById('comp-swim-min').value)||0)*60 + (parseFloat(document.getElementById('comp-swim-sec').value)||0);
-        const uBike = parseFloat(document.getElementById('comp-bike-kmh').value)||0;
-        const uRun = (parseFloat(document.getElementById('comp-run-min').value)||0)*60 + (parseFloat(document.getElementById('comp-run-sec').value)||0);
-        if(uSwim>0) updatePctText('pct-swim', (tSwim/uSwim)*100, 'comp-bar-swim');
-        if(uBike>0) updatePctText('pct-bike', (uBike/tBike)*100, 'comp-bar-bike');
-        if(uRun>0) updatePctText('pct-run', (tRun/uRun)*100, 'comp-bar-run');
+        let tSwim = currentCompareMode === 'Full' ? 95 : 90, tBike = currentCompareMode === 'Full' ? 36 : 40, tRun = currentCompareMode === 'Full' ? 270 : 225;
+        const uSwim = (parseFloat(document.getElementById('comp-swim-min').value)||0)*60 + (parseFloat(document.getElementById('comp-swim-sec').value)||0), uBike = parseFloat(document.getElementById('comp-bike-kmh').value)||0, uRun = (parseFloat(document.getElementById('comp-run-min').value)||0)*60 + (parseFloat(document.getElementById('comp-run-sec').value)||0);
+        if(uSwim>0) updatePctText('pct-swim', (tSwim/uSwim)*100, 'comp-bar-swim'); if(uBike>0) updatePctText('pct-bike', (uBike/tBike)*100, 'comp-bar-bike'); if(uRun>0) updatePctText('pct-run', (tRun/uRun)*100, 'comp-bar-run');
     }
     function updatePctText(id, val, barId) {
-        const el = document.getElementById(id); el.innerText = val.toFixed(0) + "%";
-        el.style.color = val >= 100 ? "var(--iron-green)" : (val >= 80 ? "var(--iron-gold)" : "var(--iron-red)");
-        document.getElementById(barId).style.width = Math.min(val, 100) + '%';
+        document.getElementById(id).innerText = val.toFixed(0) + "%"; document.getElementById(id).style.color = val >= 100 ? "var(--iron-green)" : (val >= 80 ? "var(--iron-gold)" : "var(--iron-red)"); document.getElementById(barId).style.width = Math.min(val, 100) + '%';
     }
     function renderTips() {
-        document.getElementById('tip-swim').innerHTML = `<h4>💡 Fato</h4><p>Técnica > Força. Alvo Top 100: Pace 1:20-1:35/100m.</p>`;
-        document.getElementById('tip-bike').innerHTML = `<h4>💡 Fato</h4><p>Alvo Top 100: Média 38-42km/h.</p>`;
-        document.getElementById('tip-run').innerHTML = `<h4>💡 Fato</h4><p>Alvo Top 100: Meia maratona entre 1h15 e 1h25.</p>`;
+        document.getElementById('tip-swim').innerHTML = `<h4>💡 Fato</h4><p>Técnica > Força. Alvo Top 100: Pace 1:20-1:35/100m.</p>`; document.getElementById('tip-bike').innerHTML = `<h4>💡 Fato</h4><p>Alvo Top 100: Média 38-42km/h.</p>`; document.getElementById('tip-run').innerHTML = `<h4>💡 Fato</h4><p>Alvo Top 100: Meia maratona entre 1h15 e 1h25.</p>`;
     }
 
-    // --- EQUIPAMENTO E BACKUP ---
     function updateGearUI() {
-        const sPct = Math.min((appState.gear.shoes/800)*100, 100);
-        document.getElementById('gear-shoes-val').innerText = appState.gear.shoes.toFixed(1)+" km";
-        document.getElementById('bar-shoes').style.width = sPct + '%';
-        document.getElementById('alert-shoes').style.display = sPct>=100 ? 'block':'none';
-        const cPct = Math.min((appState.gear.chain/5000)*100, 100);
-        document.getElementById('gear-chain-val').innerText = appState.gear.chain.toFixed(1)+" km";
-        document.getElementById('bar-chain').style.width = cPct + '%';
+        const sPct = Math.min((appState.gear.shoes/800)*100, 100), cPct = Math.min((appState.gear.chain/5000)*100, 100);
+        document.getElementById('gear-shoes-val').innerText = appState.gear.shoes.toFixed(1)+" km"; document.getElementById('bar-shoes').style.width = sPct + '%'; document.getElementById('alert-shoes').style.display = sPct>=100 ? 'block':'none';
+        document.getElementById('gear-chain-val').innerText = appState.gear.chain.toFixed(1)+" km"; document.getElementById('bar-chain').style.width = cPct + '%';
     }
-    function resetGear(t) { 
-        if(confirm("Deseja repor o contador a zero?")) { 
-            appState.gear[t]=0; saveState(); updateGearUI(); 
-            showToast("Equipamento renovado.", "var(--iron-blue)");
-        } 
-    }
-    function exportData() {
-        const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(appState));
-        a.download = "jarvis-backup.json"; a.click();
-        showToast("Backup gerado com sucesso.", "var(--iron-green)");
-    }
-    function importData(i) {
-        const r = new FileReader();
-        r.onload = e => { 
-            if(confirm("Sobrescrever dados atuais com o backup?")) { 
-                appState=JSON.parse(e.target.result); saveState(); init(); 
-                showToast("Sistema Restaurado.", "var(--iron-purple)"); 
-                closeModal('settingsModal'); 
-            }
-        };
-        if(i.files[0]) r.readAsText(i.files[0]);
-    }
+    function resetGear(t) { if(confirm("Deseja repor a zero?")) { appState.gear[t]=0; saveState(); updateGearUI(); showToast("Equipamento renovado.", "var(--iron-blue)"); } }
+    function exportData() { const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(appState)); a.download = "jarvis-backup.json"; a.click(); showToast("Backup gerado.", "var(--iron-green)"); }
+    function importData(i) { const r = new FileReader(); r.onload = e => { if(confirm("Sobrescrever?")) { appState=JSON.parse(e.target.result); saveState(); init(); showToast("Restaurado.", "var(--iron-purple)"); closeModal('settingsModal'); } }; if(i.files[0]) r.readAsText(i.files[0]); }
 
-    // --- MODAIS E CONTROLO GERAL ---
     function openModal(id) {
-        if(id==='planModal') {
-            const p = phasesConfig[appState.phaseIndex];
-            document.getElementById('plan-phase-name').innerText = p.name;
-            document.getElementById('plan-objective').innerText = p.plan.obj;
-            document.getElementById('plan-container').innerHTML = `<div class="plan-item"><h4>🏊 Natação</h4><p>${p.plan.swim}</p></div><div class="plan-item"><h4>🚴 Ciclismo</h4><p>${p.plan.bike}</p></div><div class="plan-item"><h4>🏃 Corrida</h4><p>${p.plan.run}</p></div><div class="plan-item full-width"><h4>🏋️ Força / Extra</h4><p>${p.plan.gym}</p></div>`;
-        } else if (id === 'volumeModal') updateVolumeUI(); else if (id === 'healthModal') updateHealthUI();
-        document.getElementById(id).style.display='flex';
+        if(id==='planModal') { const p = phasesConfig[appState.phaseIndex]; document.getElementById('plan-phase-name').innerText = p.name; document.getElementById('plan-objective').innerText = p.plan.obj; document.getElementById('plan-container').innerHTML = `<div class="plan-item"><h4>🏊 Natação</h4><p>${p.plan.swim}</p></div><div class="plan-item"><h4>🚴 Ciclismo</h4><p>${p.plan.bike}</p></div><div class="plan-item"><h4>🏃 Corrida</h4><p>${p.plan.run}</p></div><div class="plan-item full-width"><h4>🏋️ Força</h4><p>${p.plan.gym}</p></div>`; } 
+        else if (id === 'volumeModal') updateVolumeUI(); else if (id === 'healthModal') updateHealthUI(); document.getElementById(id).style.display='flex';
     }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     
-    function saveRaceDate() { 
-        appState.raceDate=document.getElementById('race-date-input').value; saveState(); startCountdown(); 
-        showToast("Data alvo atualizada.", "var(--iron-blue)");
-    }
+    function saveRaceDate() { appState.raceDate=document.getElementById('race-date-input').value; saveState(); startCountdown(); showToast("Data alvo atualizada.", "var(--iron-blue)"); }
+    
+    // --- CONTADOR ORIGINAL COM A CLASSE DAS CHAMAS DINÂMICAS ---
     function startCountdown() {
         if(!appState.raceDate) return;
         const d = Math.floor((new Date(appState.raceDate)-new Date())/(1000*60*60*24));
-        document.getElementById('countdown-display').innerHTML = `<span style="font-size:1.5rem; color:white; font-weight:bold;">${d}</span> <span style="font-size:0.8rem; color:#e10600;">DIAS PARA A GLÓRIA</span>`;
+        
+        let c1, c2, c3, msgColor, msg;
+
+        if (d < 0) {
+            c1 = "#e0b0ff"; c2 = "#9d00ff"; c3 = "#4b0082"; // Roxo/Neon
+            msgColor = "var(--iron-purple)";
+            msg = "O GRANDE DIA";
+        } else if (d <= 30) {
+            c1 = "#ffea00"; c2 = "#ff8000"; c3 = "#f00"; // Vermelho/Laranja (Fogo clássico - Crítico)
+            msgColor = "var(--iron-red)";
+            msg = "FÚRIA FINAL";
+        } else if (d <= 90) {
+            c1 = "#fffb00"; c2 = "#ffb300"; c3 = "#ff6600"; // Dourado/Amarelo
+            msgColor = "var(--iron-gold)";
+            msg = "DIAS PARA O ÍMPETO GLORIOSO";
+        } else if (d <= 180) {
+            c1 = "#aeff00"; c2 = "#00ff88"; c3 = "#009933"; // Verde
+            msgColor = "var(--iron-green)";
+            msg = "DIAS AVANTES PARA GLÓRIA";
+        } else {
+            c1 = "#00ffff"; c2 = "#00c3ff"; c3 = "#0044ff"; // Azul (Frio/Seguro)
+            msgColor = "var(--iron-blue)";
+            msg = "DIAS PARA A GLÓRIA";
+        }
+
+        document.getElementById('countdown-display').innerHTML = `
+            <span class="fire-numbers" style="--fire-c1:${c1}; --fire-c2:${c2}; --fire-c3:${c3};">${Math.max(0, d)}</span> 
+            <span style="font-size:0.95rem; color:${msgColor}; align-self:center; font-weight:bold; letter-spacing:1px; margin-top:5px; margin-left: 10px;">${msg}</span>
+        `;
     }
 
     function generateReport() {
-        openModal('reportModal');
-        const p = phasesConfig[appState.phaseIndex];
+        openModal('reportModal'); const p = phasesConfig[appState.phaseIndex];
         document.getElementById('report-body').innerHTML = ['swim','bike','run'].map(k=>`<tr><td>${k.toUpperCase()}</td><td>${appState.data[k]}</td><td>${((appState.data[k]/p.goals[k])*100).toFixed(0)}%</td></tr>`).join('');
         const pass = (appState.data.swim/p.goals.swim + appState.data.bike/p.goals.bike + appState.data.run/p.goals.run)/3 >= 0.8;
-        document.getElementById('verdict-display').innerText = pass ? "APROVADO ✅" : "PENDENTE ⏳";
-        document.getElementById('btn-advance').style.display = pass ? "block" : "none";
+        document.getElementById('verdict-display').innerText = pass ? "APROVADO ✅" : "PENDENTE ⏳"; document.getElementById('btn-advance').style.display = pass ? "block" : "none";
     }
-    
     function advancePhase() { 
-        if(appState.phaseIndex<3) { 
-            appState.phaseIndex++; 
-            appState.data={swim:0,bike:0,run:0}; 
-            appState.phaseStartDate = new Date().toISOString(); 
-            saveState(); init(); closeModal('reportModal'); 
-            jarvisSpeak("Parabéns, senhor. Avançamos para a próxima fase do protocolo Ironman.");
-            showToast("Acesso à Nova Fase libertado!", "var(--iron-gold)");
-        } else {
-            jarvisSpeak("O senhor concluiu o plano tático. Encontramo-nos na linha de chegada.");
-            showToast("Plano concluído!", "var(--iron-purple)"); 
-        }
+        if(appState.phaseIndex<3) { appState.phaseIndex++; appState.data={swim:0,bike:0,run:0}; appState.phaseStartDate = new Date().toISOString(); saveState(); init(); closeModal('reportModal'); jarvisSpeak("Parabéns, senhor. Avançamos para a próxima fase."); showToast("Nova Fase libertada!", "var(--iron-gold)"); } 
+        else { jarvisSpeak("O senhor concluiu o plano. Vemo-nos na meta."); showToast("Plano concluído!", "var(--iron-purple)"); }
     }
-
-    // --- MÁQUINA DO TEMPO (DEBUG) ---
-    function simulateTimeTravel(daysToAdvance) {
-        let start = new Date(appState.phaseStartDate);
-        start.setDate(start.getDate() - daysToAdvance);
-        appState.phaseStartDate = start.toISOString();
-        
-        // Simular o atraso nos treinos também
-        if(appState.logs.length > 0) {
-            let lastLogDate = new Date(appState.logs[0].date);
-            lastLogDate.setDate(lastLogDate.getDate() - daysToAdvance);
-            appState.logs[0].date = lastLogDate.toISOString();
-        }
-
-        saveState(); updateUI(); 
-        jarvisSpeak(`Salto temporal concluído, senhor. Avançámos ${daysToAdvance} dias.`);
-        showToast(`⏱️ +${daysToAdvance} dias simulados.`, "var(--iron-purple)");
+    function simulateTimeTravel(days) {
+        let s = new Date(appState.phaseStartDate); s.setDate(s.getDate() - days); appState.phaseStartDate = s.toISOString();
+        if(appState.logs.length > 0) { let l = new Date(appState.logs[0].date); l.setDate(l.getDate() - days); appState.logs[0].date = l.toISOString(); }
+        saveState(); updateUI(); jarvisSpeak(`Salto temporal concluído, senhor. Avançámos ${days} dias.`); showToast(`⏱️ +${days} dias simulados.`, "var(--iron-purple)");
     }
-    function resetTimeTravel() {
-        appState.phaseStartDate = new Date().toISOString();
-        if(appState.logs.length > 0) {
-            appState.logs[0].date = new Date().toISOString();
-        }
-        saveState(); updateUI();
-        jarvisSpeak("Linha temporal estabilizada, voltámos ao dia de hoje.");
-        showToast("⏱️ Tempo restaurado.", "var(--iron-gray)");
-    }
+    function resetTimeTravel() { appState.phaseStartDate = new Date().toISOString(); if(appState.logs.length > 0) appState.logs[0].date = new Date().toISOString(); saveState(); updateUI(); jarvisSpeak("Tempo restaurado."); showToast("⏱️ Tempo restaurado.", "var(--iron-gray)"); }
 
     init();
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
