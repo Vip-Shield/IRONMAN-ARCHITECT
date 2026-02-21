@@ -235,6 +235,22 @@
         .footer-btn:hover, .footer-btn.active { color: var(--iron-white); }
         .footer-btn:hover svg { fill: var(--iron-red); }
 
+        /* ANIMAÇÃO DO CORAÇÃO DA DOAÇÃO */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.3); text-shadow: 0 0 15px var(--iron-red); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.3); text-shadow: 0 0 15px var(--iron-red); }
+            60% { transform: scale(1); }
+        }
+        .beating-heart {
+            display: inline-block;
+            color: var(--iron-red);
+            animation: heartbeat 1.5s infinite;
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-content { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid var(--iron-gray); max-width: 600px; width: 90%; box-shadow: 0 0 30px rgba(0,0,0, 0.8); position: relative; max-height: 90vh; overflow-y: auto; }
@@ -541,6 +557,13 @@
         </div>
 
         <hr style="border:1px solid #333; margin:20px 0;">
+        <h3 style="font-size:1rem; color:var(--iron-gold);">⚡ Manutenção do Reator - Faça uma doação ❤️</h3>
+        <p style="font-size:0.8rem; color:#888;">Ajude a manter os satélites e servidores do J.A.R.V.I.S. online.</p>
+        <button class="btn-main" style="background:rgba(255, 206, 0, 0.1); border:1px solid var(--iron-gold); color:var(--iron-gold); width:100%; padding:12px; border-radius:4px; font-weight:bold; font-size:0.85rem; transition:0.3s; cursor:pointer; display:flex; justify-content:center; align-items:center;" onmouseover="this.style.background='var(--iron-gold)'; this.style.color='#000';" onmouseout="this.style.background='rgba(255, 206, 0, 0.1)'; this.style.color='var(--iron-gold)';" onclick="copyPixKey()">
+            <span class="beating-heart">❤️</span> FORNECER ENERGIA (COPIAR CHAVE PIX)
+        </button>
+
+        <hr style="border:1px solid #333; margin:20px 0;">
         <h3 style="font-size:1rem; color:var(--iron-red);">⚠ Zona de Perigo</h3>
         <button class="btn-main" style="background:#333; border:1px solid var(--iron-red); color:var(--iron-red);" onclick="factoryReset()">☢️ APAGAR TUDO</button>
     </div>
@@ -621,8 +644,8 @@
     
     if(appState.phaseIndex === undefined) appState.phaseIndex = 0; if(!appState.data) appState.data = { swim: 0, bike: 0, run: 0 };
     if(!appState.totalAccumulated) appState.totalAccumulated = { swim: 0, bike: 0, run: 0 }; if(!appState.gear) appState.gear = { shoes:0, chain:0 };
-    if(!appState.health) appState.health = { name: "Rodrigo", sex: "M", weight: 105, height: 190, fat: 0, age: 43 };
-    if(!appState.health.name) appState.health.name = "Rodrigo"; if(!appState.health.sex) appState.health.sex = "M";
+    if(!appState.health) appState.health = { name: "", sex: "M", weight: "", height: "", fat: 0, age: "" };
+    if(!appState.health.name) appState.health.name = ""; if(!appState.health.sex) appState.health.sex = "M";
     if(!appState.phaseStartDate) appState.phaseStartDate = new Date().toISOString(); if(!appState.logs) appState.logs = [];
     if(appState.settings === undefined) appState.settings = { voice: true };
     
@@ -674,6 +697,24 @@
         if(diffDays >= 7) { alertBox.style.display = 'block'; alertBox.style.borderLeftColor = 'var(--iron-red)'; alertBox.style.background = 'rgba(225, 6, 0, 0.1)'; headerText.style.color = 'var(--iron-red)'; msgBox.innerHTML = `<strong style="color:var(--iron-red)">ALERTA CRÍTICO:</strong> Senhor, não detecto atividade há ${diffDays} dias. O protocolo Ironman está em risco de degradação estrutural.`; } 
         else if(diffDays >= 3) { alertBox.style.display = 'block'; alertBox.style.borderLeftColor = 'var(--iron-gold)'; alertBox.style.background = 'rgba(255, 206, 0, 0.1)'; headerText.style.color = 'var(--iron-gold)'; msgBox.innerHTML = `<strong style="color:var(--iron-gold)">ATENÇÃO:</strong> Já se passaram ${diffDays} dias desde a sua última sessão. Lembre-se, a consistência é vital.`; } 
         else { alertBox.style.display = 'none'; }
+    }
+
+    function copyPixKey() {
+        // AQUI: Cole a sua chave Pix real dentro das aspas abaixo
+        const pixKey = "21982539175"; 
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(pixKey).then(() => {
+                showToast("Chave Pix copiada para a área de transferência! ⚡", "var(--iron-gold)");
+                jarvisSpeak("Obrigado por manter o sistema online, senhor.");
+            }).catch(err => {
+                console.error('Erro ao copiar Pix: ', err);
+                showToast("Erro ao copiar. Configure a chave no código.", "var(--iron-red)");
+            });
+        } else {
+            // Alternativa para aparelhos antigos
+            showToast("A sua chave Pix: " + pixKey, "var(--iron-gold)");
+        }
     }
 
     function handleGPXUpload(input) { if (input.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processGPX(e.target.result); }; reader.readAsText(input.files[0]); } }
@@ -883,7 +924,7 @@
     }
 
     function saveHealthData() {
-        appState.health.name = document.getElementById('health-name').value || "Rodrigo"; appState.health.sex = document.getElementById('health-sex').value;
+        appState.health.name = document.getElementById('health-name').value || ""; appState.health.sex = document.getElementById('health-sex').value;
         appState.health.weight = parseFloat(document.getElementById('health-weight').value) || appState.health.weight; appState.health.height = parseFloat(document.getElementById('health-height').value) || appState.health.height; appState.health.age = parseFloat(document.getElementById('health-age').value) || appState.health.age;
         let inputFat = parseFloat(document.getElementById('health-fat').value);
         if (!inputFat || isNaN(inputFat) || inputFat === 0) {
@@ -896,17 +937,21 @@
         document.getElementById('health-name').value = appState.health.name; document.getElementById('health-sex').value = appState.health.sex;
         document.getElementById('health-weight').value = appState.health.weight; document.getElementById('health-height').value = appState.health.height;
         document.getElementById('health-fat').value = appState.health.fat; document.getElementById('health-age').value = appState.health.age;
-        document.getElementById('val-weight').innerText = appState.health.weight; document.getElementById('val-fat').innerText = appState.health.fat > 0 ? appState.health.fat : "--";
-        document.getElementById('display-health-age').innerText = appState.health.age; document.getElementById('display-health-name').innerText = appState.health.name ? `Sinais Vitais: ${appState.health.name.split(' ')[0]}` : "Sinais Vitais";
+        document.getElementById('val-weight').innerText = appState.health.weight || "--"; document.getElementById('val-fat').innerText = appState.health.fat > 0 ? appState.health.fat : "--";
+        document.getElementById('display-health-age').innerText = appState.health.age || "--"; document.getElementById('display-health-name').innerText = appState.health.name ? `Sinais Vitais: ${appState.health.name.split(' ')[0]}` : "Sinais Vitais";
 
         const root = document.documentElement;
         if(appState.health.sex === 'F') { root.style.setProperty('--vital-main', '#ff00ba'); root.style.setProperty('--vital-bg', 'rgba(255, 0, 186, 0.1)'); root.style.setProperty('--vital-shadow', 'rgba(255, 0, 186, 0.3)'); document.getElementById('health-icon').innerText = "🩷"; } 
         else { root.style.setProperty('--vital-main', '#00c3ff'); root.style.setProperty('--vital-bg', 'rgba(0, 195, 255, 0.1)'); root.style.setProperty('--vital-shadow', 'rgba(0, 195, 255, 0.3)'); document.getElementById('health-icon').innerText = "🔵"; }
 
-        const imc = (appState.health.weight / Math.pow(appState.health.height/100, 2)).toFixed(1), bmr = Math.round(appState.health.sex === 'F' ? 447.59 + (9.24 * appState.health.weight) + (3.09 * appState.health.height) - (4.33 * appState.health.age) : 88.36 + (13.4 * appState.health.weight) + (4.8 * appState.health.height) - (5.7 * appState.health.age));
-        document.getElementById('calc-imc').innerText = imc; document.getElementById('calc-bmr').innerText = bmr + " kcal/dia";
-        const statusEl = document.getElementById('display-bmi-status'); statusEl.innerText = `IMC ${imc} (${imc < 18.5 ? "Baixo Peso" : imc >= 30 ? "Obesidade" : imc >= 25 ? "Sobrepeso" : "Normal"})`;
-        statusEl.style.color = (imc >= 25 || imc < 18.5) ? (imc >= 30 ? "var(--iron-red)" : "var(--iron-gold)") : "var(--iron-green)";
+        let imc = "--", bmr = "--";
+        if (appState.health.weight && appState.health.height) { imc = (appState.health.weight / Math.pow(appState.health.height/100, 2)).toFixed(1); }
+        if (appState.health.weight && appState.health.height && appState.health.age) { bmr = Math.round(appState.health.sex === 'F' ? 447.59 + (9.24 * appState.health.weight) + (3.09 * appState.health.height) - (4.33 * appState.health.age) : 88.36 + (13.4 * appState.health.weight) + (4.8 * appState.health.height) - (5.7 * appState.health.age)); }
+        
+        document.getElementById('calc-imc').innerText = imc; document.getElementById('calc-bmr').innerText = bmr === "--" ? "-- kcal/dia" : bmr + " kcal/dia";
+        const statusEl = document.getElementById('display-bmi-status'); 
+        statusEl.innerText = imc === "--" ? "Pendente" : `IMC ${imc} (${imc < 18.5 ? "Baixo Peso" : imc >= 30 ? "Obesidade" : imc >= 25 ? "Sobrepeso" : "Normal"})`;
+        statusEl.style.color = imc === "--" ? "var(--iron-white)" : ((imc >= 25 || imc < 18.5) ? (imc >= 30 ? "var(--iron-red)" : "var(--iron-gold)") : "var(--iron-green)");
     }
 
     function setVolumeLevel(level) {
