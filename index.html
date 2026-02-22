@@ -507,12 +507,12 @@
             </div>
         </div>
         <div class="input-row">
-            <div class="input-col"><label>Peso (kg)</label><input type="number" id="health-weight"></div>
-            <div class="input-col"><label>Altura (cm)</label><input type="number" id="health-height"></div>
+            <div class="input-col"><label>Peso (kg)</label><input type="number" id="health-weight" oninput="document.getElementById('health-fat').value=''"></div>
+            <div class="input-col"><label>Altura (cm)</label><input type="number" id="health-height" oninput="document.getElementById('health-fat').value=''"></div>
         </div>
         <div class="input-row">
              <div class="input-col"><label>% Gordura (Vazio = Auto)</label><input type="number" step="0.1" id="health-fat" placeholder="Auto"></div>
-            <div class="input-col"><label>Idade</label><input type="number" id="health-age"></div>
+            <div class="input-col"><label>Idade</label><input type="number" id="health-age" oninput="document.getElementById('health-fat').value=''"></div>
         </div>
         <hr style="border:1px solid #333; margin:20px 0;">
         <div style="background:var(--vital-bg); padding:15px; border-radius:5px; border-left:3px solid var(--vital-main); margin-bottom:20px;">
