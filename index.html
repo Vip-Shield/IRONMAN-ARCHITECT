@@ -546,6 +546,21 @@
             <button class="btn-main" style="background:var(--iron-blue);" onclick="exportData()">⬇ Salvar</button>
             <label class="btn-main" style="background:var(--iron-gray); text-align:center; cursor:pointer;">⬆ Restaurar<input type="file" class="btn-file-input" id="backup-file" onchange="importData(this)"></label>
         </div>
+
+        <hr style="border:1px solid #333; margin:20px 0;">
+        <div class="log-header" style="display:flex; justify-content:space-between; align-items:center;" onclick="toggleStravaConfig()">
+            <h3 style="margin:0; font-size:1rem; color:#fc4c02;">🛰️ Conexão Strava API</h3>
+            <span id="strava-icon" class="icon-rotate collapsed" style="color:#fc4c02;">▼</span>
+        </div>
+        <div id="strava-config-wrapper" class="log-content-wrapper collapsed">
+            <p style="font-size:0.8rem; color:#888; margin-top: 10px;">Cole as suas credenciais de desenvolvedor para sincronizar treinos automaticamente.</p>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <input type="text" id="cfg-strava-id" placeholder="Client ID" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:4px;">
+                <input type="password" id="cfg-strava-secret" placeholder="Client Secret" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:4px;">
+                <input type="password" id="cfg-strava-token" placeholder="Refresh Token" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:4px;">
+                <button class="btn-main" style="background:#fc4c02; font-size:0.85rem;" onclick="saveStravaKeys()">Salvar Credenciais Strava</button>
+            </div>
+        </div>
         
         <hr style="border:1px solid #333; margin:20px 0;">
         <h3 style="font-size:1rem; color:var(--iron-purple);">⏱️ J.A.R.V.I.S. Override (Debug de Tempo)</h3>
@@ -574,22 +589,28 @@
 <div class="modal-overlay" id="reportModal"><div class="modal-content"><span class="close-btn" onclick="closeModal('reportModal')">&times;</span><h2 style="color:var(--iron-red);">Relatório de Cruzamento</h2><table class="report-table"><tbody id="report-body"></tbody></table><div id="verdict-display" class="verdict" style="text-align:center; font-weight:bold; margin-top:20px;"></div><button class="btn-main" id="btn-advance" onclick="advancePhase()" style="display:none; margin-top:15px;">Avançar Fase</button></div></div>
 
 <script>
-    // --- STRAVA API INTEGRATION ---
-    const STRAVA_CLIENT_ID = 'SEU_CLIENT_ID';
-    const STRAVA_CLIENT_SECRET = 'SEU_CLIENT_SECRET';
-    const STRAVA_REFRESH_TOKEN = 'SEU_REFRESH_TOKEN';
-
     async function syncStrava() {
-        if (STRAVA_CLIENT_ID === 'SEU_CLIENT_ID') {
-            showToast("Configure as credenciais do Strava no código fonte.", "var(--iron-gold)");
-            jarvisSpeak("Senhor, as credenciais da API do Strava não estão configuradas.");
+        const sid = appState.strava?.id;
+        const ssec = appState.strava?.secret;
+        const stoken = appState.strava?.token;
+
+        if (!sid || !ssec || !stoken) {
+            showToast("Configure as credenciais do Strava nas Configurações.", "var(--iron-gold)");
+            jarvisSpeak("Senhor, as credenciais da API do Strava não estão configuradas no seu painel.");
+            openModal('settingsModal');
+            
+            // Abre o painel do Strava automaticamente se estiver fechado
+            const wrapper = document.getElementById('strava-config-wrapper');
+            if (wrapper && wrapper.classList.contains('collapsed')) {
+                toggleStravaConfig();
+            }
             return;
         }
         try {
             showToast("Conectando aos satélites Strava...", "var(--iron-blue)");
-            const tokenResponse = await fetch(`https://www.strava.com/oauth/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ client_id: STRAVA_CLIENT_ID, client_secret: STRAVA_CLIENT_SECRET, refresh_token: STRAVA_REFRESH_TOKEN, grant_type: 'refresh_token' }) });
+            const tokenResponse = await fetch(`https://www.strava.com/oauth/token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ client_id: sid, client_secret: ssec, refresh_token: stoken, grant_type: 'refresh_token' }) });
             const tokenData = await tokenResponse.json(); const accessToken = tokenData.access_token;
-            if(!accessToken) throw new Error("Falha na autenticação do Strava.");
+            if(!accessToken) throw new Error("Falha na autenticação. Verifique as suas credenciais.");
             const activitiesResponse = await fetch(`https://www.strava.com/api/v3/athlete/activities?per_page=1`, { headers: { 'Authorization': `Bearer ${accessToken}` } });
             const activities = await activitiesResponse.json();
             if (activities && activities.length > 0) processStravaActivity(activities[0]);
@@ -657,6 +678,13 @@
         if(appState.raceDate) document.getElementById('race-date-input').value = appState.raceDate;
         document.getElementById('btn-voice-toggle').innerText = appState.settings.voice ? "LIGADO" : "DESLIGADO";
         document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
+        
+        if(appState.strava) { 
+            document.getElementById('cfg-strava-id').value = appState.strava.id || ""; 
+            document.getElementById('cfg-strava-secret').value = appState.strava.secret || ""; 
+            document.getElementById('cfg-strava-token').value = appState.strava.token || ""; 
+        }
+
         renderTips();
 
         if(!sessionStorage.getItem('jarvisWelcomed')) {
@@ -686,7 +714,20 @@
         document.getElementById('btn-voice-toggle').innerText = appState.settings.voice ? "LIGADO" : "DESLIGADO"; document.getElementById('btn-voice-toggle').style.background = appState.settings.voice ? "var(--iron-green)" : "#444";
         if(appState.settings.voice) jarvisSpeak("Sistemas de voz online, senhor.");
     }
-    function toggleLog() { const wrapper = document.getElementById('log-inputs-wrapper'); const icon = document.getElementById('log-icon'); wrapper.classList.toggle('collapsed'); icon.classList.toggle('collapsed'); }
+    
+    function toggleLog() { 
+        const wrapper = document.getElementById('log-inputs-wrapper'); 
+        const icon = document.getElementById('log-icon'); 
+        wrapper.classList.toggle('collapsed'); 
+        icon.classList.toggle('collapsed'); 
+    }
+    
+    function toggleStravaConfig() { 
+        const wrapper = document.getElementById('strava-config-wrapper'); 
+        const icon = document.getElementById('strava-icon'); 
+        wrapper.classList.toggle('collapsed'); 
+        icon.classList.toggle('collapsed'); 
+    }
 
     function checkIdleAlert() {
         const alertBox = document.getElementById('jarvis-idle-alert'), msgBox = document.getElementById('jarvis-idle-msg'), headerText = document.querySelector('#jarvis-idle-alert h4');
@@ -701,20 +742,36 @@
 
     function copyPixKey() {
         // AQUI: Cole a sua chave Pix real dentro das aspas abaixo
-        const pixKey = "21982539175"; 
+        const pixKey = "COLOQUE_SUA_CHAVE_PIX_AQUI"; 
         
-        if (navigator.clipboard) {
+        // Tenta usar a API moderna primeiro
+        if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(pixKey).then(() => {
                 showToast("Chave Pix copiada para a área de transferência! ⚡", "var(--iron-gold)");
                 jarvisSpeak("Obrigado por manter o sistema online, senhor.");
-            }).catch(err => {
-                console.error('Erro ao copiar Pix: ', err);
-                showToast("Erro ao copiar. Configure a chave no código.", "var(--iron-red)");
-            });
+            }).catch(err => copyPixFallback(pixKey));
         } else {
-            // Alternativa para aparelhos antigos
-            showToast("A sua chave Pix: " + pixKey, "var(--iron-gold)");
+            // Método infalível para ficheiros offline (file://)
+            copyPixFallback(pixKey);
         }
+    }
+
+    function copyPixFallback(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; // Evita que a página role para baixo
+        textArea.style.opacity = "0";      // Torna invisível
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast("Chave Pix copiada para a área de transferência! ⚡", "var(--iron-gold)");
+            jarvisSpeak("Obrigado por manter o sistema online, senhor.");
+        } catch (err) {
+            showToast("A sua chave Pix: " + text, "var(--iron-gold)");
+        }
+        document.body.removeChild(textArea);
     }
 
     function handleGPXUpload(input) { if (input.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processGPX(e.target.result); }; reader.readAsText(input.files[0]); } }
@@ -906,6 +963,21 @@
 
     function saveState() { localStorage.setItem('ironmanState', JSON.stringify(appState)); }
     
+    function saveStravaKeys() {
+        if(!appState.strava) appState.strava = {};
+        appState.strava.id = document.getElementById('cfg-strava-id').value.trim();
+        appState.strava.secret = document.getElementById('cfg-strava-secret').value.trim();
+        appState.strava.token = document.getElementById('cfg-strava-token').value.trim();
+        saveState();
+        showToast("Credenciais Strava salvas com segurança no dispositivo.", "#fc4c02");
+        
+        // Fecha o painel após salvar
+        const wrapper = document.getElementById('strava-config-wrapper');
+        if(!wrapper.classList.contains('collapsed')) {
+            toggleStravaConfig();
+        }
+    }
+
     function updateUI() {
         const p = phasesConfig[appState.phaseIndex]; document.getElementById('phase-badge').innerText = p.name.split(':')[0];
         const phaseProgressRatio = Math.min(Math.max(0, (new Date() - new Date(appState.phaseStartDate)) / (1000 * 60 * 60 * 24)) / 90, 1); 
