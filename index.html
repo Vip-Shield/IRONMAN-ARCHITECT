@@ -196,16 +196,41 @@
         .gpx-link { font-size: 0.75rem; color: var(--iron-blue); cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 5px; opacity: 0.7; transition: 0.3s; }
         .gpx-link:hover { opacity: 1; text-shadow: 0 0 5px var(--iron-blue); }
 
-        /* DASHBOARD GRID E CARDS */
+        /* DASHBOARD GRID E CARDS (ATUALIZADO) */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card { background: var(--iron-panel); padding: 20px; border-radius: 8px; border: 1px solid #333; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+        .card { 
+            background: var(--iron-panel); 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 1px solid #333; 
+            position: relative; 
+            overflow: hidden; 
+            backdrop-filter: blur(10px); 
+            cursor: pointer; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(225, 6, 0, 0.2);
+        }
         .card h3 { margin: 0; font-size: 0.8rem; color: #888; text-transform: uppercase; }
         .value-display { font-size: 2.2rem; font-weight: bold; margin: 10px 0; }
         .sub-value { font-size: 0.9rem; color: #666; }
         .progress-bg { background: #333; height: 6px; border-radius: 3px; margin-top: 15px; position: relative; overflow: hidden; }
         .progress-fill { background: var(--iron-red); height: 100%; width: 0%; transition: 1s; }
         .ghost-marker { position: absolute; top: 0; bottom: 0; width: 4px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 8px rgba(255, 255, 255, 0.8); z-index: 5; transition: left 1s ease-in-out; border-radius: 2px; }
-        .status-text { font-size: 0.75rem; display: block; margin-top: 8px; font-weight: bold; text-align: right; }
+        
+        .status-text { 
+            font-size: 0.75rem; 
+            display: inline-block; 
+            margin-top: 8px; 
+            font-weight: bold; 
+            text-align: right; 
+            cursor: help; 
+            border-bottom: 1px dotted #888; 
+            padding-bottom: 2px;
+        }
+        .status-text:hover { opacity: 0.8; }
         .status-positive { color: var(--iron-green); }
         .status-negative { color: var(--iron-red); }
         .chart-container { width: 100%; height: 250px; margin-top: 15px; }
@@ -429,7 +454,7 @@
     </div>
 
     <div class="grid">
-        <div class="card">
+        <div class="card" onclick="showModalityTip('swim')">
             <h3>Natação</h3>
             <div class="value-display"><span id="val-swim">0</span> <small>m</small></div>
             <div class="sub-value">Meta: <span id="goal-swim">0</span>m</div>
@@ -437,9 +462,12 @@
                 <div id="bar-swim" class="progress-fill"></div>
                 <div id="ghost-swim" class="ghost-marker" style="left: 0%;"></div>
             </div>
-            <span id="status-swim" class="status-text"></span>
+            <div style="text-align: right;">
+                <span id="status-swim" class="status-text" onclick="explainStatus(event)" title="Clique para entender o cálculo do Fantasma"></span>
+            </div>
         </div>
-        <div class="card">
+        
+        <div class="card" onclick="showModalityTip('bike')">
             <h3>Bike</h3>
             <div class="value-display"><span id="val-bike">0</span> <small>km</small></div>
             <div class="sub-value">Meta: <span id="goal-bike">0</span>km</div>
@@ -447,9 +475,12 @@
                 <div id="bar-bike" class="progress-fill"></div>
                 <div id="ghost-bike" class="ghost-marker" style="left: 0%;"></div>
             </div>
-            <span id="status-bike" class="status-text"></span>
+            <div style="text-align: right;">
+                <span id="status-bike" class="status-text" onclick="explainStatus(event)" title="Clique para entender o cálculo do Fantasma"></span>
+            </div>
         </div>
-        <div class="card">
+        
+        <div class="card" onclick="showModalityTip('run')">
             <h3>Corrida</h3>
             <div class="value-display"><span id="val-run">0</span> <small>km</small></div>
             <div class="sub-value">Meta: <span id="goal-run">0</span>km</div>
@@ -457,7 +488,9 @@
                 <div id="bar-run" class="progress-fill"></div>
                 <div id="ghost-run" class="ghost-marker" style="left: 0%;"></div>
             </div>
-            <span id="status-run" class="status-text"></span>
+            <div style="text-align: right;">
+                <span id="status-run" class="status-text" onclick="explainStatus(event)" title="Clique para entender o cálculo do Fantasma"></span>
+            </div>
         </div>
     </div>
 
@@ -1204,6 +1237,45 @@
         saveState(); updateUI(); jarvisSpeak(`Salto temporal concluído, senhor. Avançámos ${days} dias.`); showToast(`⏱️ +${days} dias simulados.`, "var(--iron-purple)");
     }
     function resetTimeTravel() { appState.phaseStartDate = new Date().toISOString(); if(appState.logs.length > 0) appState.logs[0].date = new Date().toISOString(); saveState(); updateUI(); jarvisSpeak("Tempo restaurado."); showToast("⏱️ Tempo restaurado.", "var(--iron-gray)"); }
+
+    // --- BANCO DE DADOS DE DICAS DINÂMICAS POR FASE ---
+    const modalityTips = {
+        swim: [
+            "Fase 1 (Base): Foque na respiração e no deslize. Não brigue com a água, tente encontrar um ritmo de respiração bilateral confortável.",
+            "Fase 2 (Resistência): Tente sustentar o nado contínuo sem paradas na borda. O objetivo agora é volume de tempo na água.",
+            "Fase 3 (Volume): Simule natação em águas abertas. Pratique levantar a cabeça (navegação) sem perder o ritmo das braçadas.",
+            "Fase 4 (Polimento): O trabalho duro está feito. Faça apenas treinos curtos com pequenos tiros de velocidade (sprints) para manter a sensibilidade da água."
+        ],
+        bike: [
+            "Fase 1 (Base): Mantenha a cadência alta (85-95 rpm). Evite marchas pesadas. Acostume os seus tendões e a sua postura na sela.",
+            "Fase 2 (Resistência): Aumente o tempo de sela. Comece a introduzir pequenos períodos na posição aerodinâmica (clipado) se tiver clip.",
+            "Fase 3 (Volume): Os treinos longos (Longões) definem esta fase. É obrigatório treinar a sua estratégia de nutrição e hidratação na bicicleta agora.",
+            "Fase 4 (Polimento): Reduza o volume drasticamente. Mantenha as pernas ativas com estímulos muito curtos de velocidade (ativação)."
+        ],
+        run: [
+            "Fase 1 (Base): Caminhe se precisar! O foco principal é fortalecer articulações e tendões de forma gradual para evitar lesões precoces.",
+            "Fase 2 (Resistência): Busque a consistência do pace (ritmo). Tente manter a frequência cardíaca baixa (Zona 2) na maior parte do tempo.",
+            "Fase 3 (Volume): Chegou a hora dos 'Bricks'. Acostume o seu corpo com a sensação de 'pernas de cimento' correndo imediatamente após sair da bicicleta.",
+            "Fase 4 (Polimento): Descanse. A sua reserva de energia fresca será a sua maior arma no dia da prova. Treinos levíssimos apenas."
+        ]
+    };
+
+    function showModalityTip(modality) {
+        // Pega a fase atual (0 a 3)
+        const phase = appState.phaseIndex;
+        const tip = modalityTips[modality][phase];
+        
+        showToast("💡 J.A.R.V.I.S: " + tip, "var(--iron-gold)");
+        jarvisSpeak(tip);
+    }
+
+    function explainStatus(event) {
+        event.stopPropagation(); // Evita que o clique acione também a dica do Card inteiro
+        
+        const msg = "O 'Fantasma' (barra branca) indica onde você deveria estar hoje com base nos dias corridos desta Fase (90 dias). Se o seu progresso estiver atrás da barra, você está 'Atrasado'. Mantenha o foco!";
+        showToast("📊 J.A.R.V.I.S: " + msg, "var(--iron-blue)");
+        jarvisSpeak("Esta métrica cruza o volume que o senhor executou com a progressão linear do tempo da nossa fase atual, indicando se estamos dentro da meta projetada.");
+    }
 
     init();
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
