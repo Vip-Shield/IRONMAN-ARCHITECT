@@ -182,7 +182,7 @@
         .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
         .input-col { flex: 1; display: flex; flex-direction: column; }
         .input-col label { font-size: 0.7rem; color: #888; margin-bottom: 3px; text-transform: uppercase; }
-        input[type="number"], input[type="text"], select { background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        input[type="datetime-local"], input[type="number"], input[type="text"], select { background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box; }
 
         .rpe-container { margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; }
         .rpe-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
@@ -395,6 +395,12 @@
         </div>
         
         <div id="log-inputs-wrapper" class="log-content-wrapper collapsed">
+            <div class="input-row">
+                <div class="input-col">
+                    <label>📅 Data e Hora do Treino (Opcional)</label>
+                    <input type="datetime-local" id="in-log-date" style="background: rgba(37, 37, 37, 0.8); border: 1px solid var(--iron-gray); color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
             <div class="input-row">
                 <div class="input-col"><label>🏊 Natação (m)</label><input type="number" id="in-swim" placeholder="Metros"></div>
                 <div class="input-col"><label>Tempo (min)</label><input type="number" id="in-swim-time" placeholder="Minutos"></div>
@@ -620,12 +626,23 @@
 
     function processStravaActivity(activity) {
         const distanceKm = (activity.distance / 1000).toFixed(2), distanceM = activity.distance.toFixed(0), timeMin = Math.round(activity.moving_time / 60);
-        document.getElementById('in-swim').value = ""; document.getElementById('in-swim-time').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-bike-time').value = ""; document.getElementById('in-run').value = ""; document.getElementById('in-run-time').value = "";
+        
+        // Limpa os campos, incluindo a nova data
+        document.getElementById('in-swim').value = ""; document.getElementById('in-swim-time').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-bike-time').value = ""; document.getElementById('in-run').value = ""; document.getElementById('in-run-time').value = ""; document.getElementById('in-log-date').value = "";
+        
         let sportName = "";
         if (activity.type === 'Ride' || activity.type === 'VirtualRide') { document.getElementById('in-bike').value = distanceKm; document.getElementById('in-bike-time').value = timeMin; sportName = "Ciclismo"; } 
         else if (activity.type === 'Run' || activity.type === 'VirtualRun') { document.getElementById('in-run').value = distanceKm; document.getElementById('in-run-time').value = timeMin; sportName = "Corrida"; } 
         else if (activity.type === 'Swim') { document.getElementById('in-swim').value = distanceM; document.getElementById('in-swim-time').value = timeMin; sportName = "Natação"; } 
         else { showToast(`Esporte não suportado: ${activity.type}`, "var(--iron-gold)"); return; }
+
+        // NOVO: Preenche automaticamente a data e hora puxadas do Strava
+        if (activity.start_date) {
+            const sd = new Date(activity.start_date);
+            const tzOffset = sd.getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(sd - tzOffset)).toISOString().slice(0, 16);
+            document.getElementById('in-log-date').value = localISOTime;
+        }
 
         showToast(`Dados de ${sportName} importados do Strava! Salve o treino.`, "var(--iron-blue)"); jarvisSpeak(`Download de telemetria concluído. Atividade de ${sportName} detetada e carregada no painel, senhor.`);
         const wrapper = document.getElementById('log-inputs-wrapper'); const icon = document.getElementById('log-icon');
@@ -775,19 +792,68 @@
     }
 
     function handleGPXUpload(input) { if (input.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processGPX(e.target.result); }; reader.readAsText(input.files[0]); } }
+    
     function processGPX(gpxContent) {
-        const xmlDoc = new DOMParser().parseFromString(gpxContent, "text/xml"), trkpts = xmlDoc.getElementsByTagName("trkpt");
-        if (trkpts.length < 2) { showToast("Ficheiro GPX inválido.", "var(--iron-red)"); return; }
+        const xmlDoc = new DOMParser().parseFromString(gpxContent, "text/xml");
+        const trkpts = xmlDoc.getElementsByTagName("trkpt");
+        
+        if (trkpts.length < 2) { 
+            showToast("Ficheiro GPX inválido.", "var(--iron-red)"); 
+            return; 
+        }
+        
         let totalDistKm = 0;
-        for (let i = 0; i < trkpts.length - 1; i++) totalDistKm += getDistanceFromLatLonInKm(parseFloat(trkpts[i].getAttribute("lat")), parseFloat(trkpts[i].getAttribute("lon")), parseFloat(trkpts[i+1].getAttribute("lat")), parseFloat(trkpts[i+1].getAttribute("lon")));
+        for (let i = 0; i < trkpts.length - 1; i++) {
+            totalDistKm += getDistanceFromLatLonInKm(
+                parseFloat(trkpts[i].getAttribute("lat")), 
+                parseFloat(trkpts[i].getAttribute("lon")), 
+                parseFloat(trkpts[i+1].getAttribute("lat")), 
+                parseFloat(trkpts[i+1].getAttribute("lon"))
+            );
+        }
+        
+        // NOVO: Tenta extrair a data e hora do ficheiro GPX (geralmente na primeira tag <time>)
+        let gpxDateStr = "";
+        const timeNodes = xmlDoc.getElementsByTagName("time");
+        if (timeNodes && timeNodes.length > 0) {
+            gpxDateStr = timeNodes[0].textContent;
+        }
+
         const confirmDist = totalDistKm.toFixed(2);
+        
         if(confirm(`Distância detetada: ${confirmDist} km.\nOnde deseja adicionar?\n1 = Nat, 2 = Bike, 3 = Corrida`)) {
-             let sport = prompt("Digite 1, 2 ou 3", "3"); document.getElementById('in-swim').value = ""; document.getElementById('in-bike').value = ""; document.getElementById('in-run').value = "";
-             if(sport === "1") document.getElementById('in-swim').value = (totalDistKm * 1000).toFixed(0); if(sport === "2") document.getElementById('in-bike').value = confirmDist; if(sport === "3") document.getElementById('in-run').value = confirmDist;
+             let sport = prompt("Digite 1, 2 ou 3", "3"); 
+             
+             // Limpa os campos antes de preencher, incluindo a data e os tempos
+             ['in-swim', 'in-bike', 'in-run', 'in-swim-time', 'in-bike-time', 'in-run-time', 'in-log-date'].forEach(id => {
+                 document.getElementById(id).value = "";
+             });
+             
+             if(sport === "1") document.getElementById('in-swim').value = (totalDistKm * 1000).toFixed(0); 
+             if(sport === "2") document.getElementById('in-bike').value = confirmDist; 
+             if(sport === "3") document.getElementById('in-run').value = confirmDist;
+             
+             // NOVO: Converte o carimbo de tempo do GPX para o formato do input
+             if (gpxDateStr) {
+                 try {
+                     const sd = new Date(gpxDateStr);
+                     const tzOffset = sd.getTimezoneOffset() * 60000;
+                     const localISOTime = (new Date(sd - tzOffset)).toISOString().slice(0, 16);
+                     document.getElementById('in-log-date').value = localISOTime;
+                 } catch (e) {
+                     console.warn("J.A.R.V.I.S: Não foi possível ler a data do GPX.", e);
+                 }
+             }
+
              showToast("Campos preenchidos! Salve o treino.", "var(--iron-blue)");
-             const wrapper = document.getElementById('log-inputs-wrapper'); if (wrapper.classList.contains('collapsed')) { wrapper.classList.remove('collapsed'); document.getElementById('log-icon').classList.remove('collapsed'); }
+             const wrapper = document.getElementById('log-inputs-wrapper'); 
+             if (wrapper.classList.contains('collapsed')) { 
+                 wrapper.classList.remove('collapsed'); 
+                 document.getElementById('log-icon').classList.remove('collapsed'); 
+             }
         }
     }
+    
     function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
         var R = 6371; var dLat = (lat2-lat1)*(Math.PI/180); var dLon = (lon2-lon1)*(Math.PI/180); 
         var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*(Math.PI/180)) * Math.cos(lat2*(Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
@@ -804,11 +870,15 @@
         const b = parseFloat(document.getElementById('in-bike').value)||0, bt = parseFloat(document.getElementById('in-bike-time').value)||0;
         const r = parseFloat(document.getElementById('in-run').value)||0, rt = parseFloat(document.getElementById('in-run-time').value)||0;
         const rpe = document.getElementById('rpe-input').value;
+        const dateInput = document.getElementById('in-log-date').value; // Coleta a data informada
 
         if(s===0 && b===0 && r===0) { showToast("Preencha ao menos uma distância.", "var(--iron-red)"); jarvisSpeak("Senhor, não detetei nenhum movimento de treino."); return; }
         
+        // NOVO: Usa a data inserida ou o momento atual se estiver vazio
+        const logDate = dateInput ? new Date(dateInput).toISOString() : new Date().toISOString();
+
         let logEntry = { 
-            date: new Date().toISOString(), 
+            date: logDate, 
             text: [], 
             rpe: rpe,
             raw: { swim: s, bike: b, run: r }
@@ -818,12 +888,16 @@
         if(b > 0) { let pace = (bt>0)?` (${(b/(bt/60)).toFixed(1)} km/h)`:""; logEntry.text.push(`🚴 ${b}km${pace}`); }
         if(r > 0) { let pace = (rt>0)?` (${Math.floor(rt/r)}:${Math.round((rt/r-Math.floor(rt/r))*60).toString().padStart(2,'0')}/km)`:""; logEntry.text.push(`🏃 ${r}km${pace}`); }
 
-        appState.logs.unshift(logEntry); 
+        // NOVO: Adiciona e ordena os logs garantindo que o mais recente (por data) fique em appState.logs[0]
+        appState.logs.push(logEntry); 
+        appState.logs.sort((a, b) => new Date(b.date) - new Date(a.date));
         
         appState.data.swim += s; appState.data.bike += b; appState.data.run += r; appState.totalAccumulated.swim += s; appState.totalAccumulated.bike += b; appState.totalAccumulated.run += r; appState.gear.shoes += r; appState.gear.chain += b;
         
         saveState(); updateUI(); updateGearUI(); if(document.getElementById('volumeModal').style.display === 'flex') updateVolumeUI();
-        ['in-swim','in-swim-time','in-bike','in-bike-time','in-run','in-run-time','gpx-input'].forEach(id => document.getElementById(id).value = '');
+        
+        // NOVO: Limpa também o campo de data após salvar
+        ['in-log-date', 'in-swim','in-swim-time','in-bike','in-bike-time','in-run','in-run-time','gpx-input'].forEach(id => document.getElementById(id).value = '');
 
         if(appState.gear.shoes >= 800) { jarvisSpeak("Treino registado, mas atenção: integridade do seu calçado comprometida."); showToast("⚠ Ténis excedeu o limite!", "var(--iron-red)"); } 
         else { jarvisSpeak("Treino atualizado com sucesso, senhor."); showToast("Sessão salva na base de dados.", "var(--iron-green)"); }
@@ -877,7 +951,6 @@
         return { swim: swim, bike: bike, run: run };
     }
 
-    // NOVA FUNÇÃO: Renderiza o gráfico com múltiplos eixos Y
     function renderWeeklyChart() {
         const ctx = document.getElementById('weeklyChart').getContext('2d');
         
