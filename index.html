@@ -1091,7 +1091,10 @@
 
         ['swim','bike','run'].forEach(mode => {
             const val = appState.data[mode], goal = p.goals[mode], expected = goal * phaseProgressRatio;
-            document.getElementById(`val-${mode}`).innerText = val; document.getElementById(`goal-${mode}`).innerText = goal;
+            
+            // Alteração aplicada aqui!
+            document.getElementById(`val-${mode}`).innerText = parseFloat(val.toFixed(2)); document.getElementById(`goal-${mode}`).innerText = goal;
+            
             document.getElementById(`bar-${mode}`).style.width = Math.min((val/goal)*100, 100) + '%'; document.getElementById(`ghost-${mode}`).style.left = Math.min((expected/goal)*100, 100) + '%';
             const statusText = document.getElementById(`status-${mode}`);
             if (val >= expected) { document.getElementById(`bar-${mode}`).style.background = 'var(--iron-green)'; statusText.innerText = `▲ +${Math.abs(val - expected).toFixed(0)} (Na meta)`; statusText.className = 'status-text status-positive'; } 
@@ -1136,15 +1139,21 @@
         currentVolumeLevel = level; document.querySelectorAll('.level-tab').forEach(el => el.classList.remove('active'));
         document.querySelector(`.level-tab.lvl-${level}`).classList.add('active'); updateVolumeUI();
     }
+    
     function updateVolumeUI() {
         const target = annualTargets[currentVolumeLevel], totals = appState.totalAccumulated, badge = document.getElementById('lvl-badge');
         badge.innerHTML = `<h3 style="color:${target.color}">${target.name.toUpperCase()}</h3><p>${target.desc}</p>`; badge.style.borderLeft = `3px solid ${target.color}`;
         ['swim','bike','run'].forEach(t => renderGameBar(t, totals[t], target[t], target.color));
     }
+    
     function renderGameBar(type, current, target, color) {
         const pct = Math.min((current / target) * 100, 100).toFixed(1);
         document.getElementById(`game-bar-${type}`).style.width = pct + '%'; document.getElementById(`game-bar-${type}`).style.backgroundColor = color;
-        document.getElementById(`game-${type}-curr`).innerText = current.toLocaleString('pt-BR'); document.getElementById(`game-${type}-target`).innerText = target.toLocaleString('pt-BR'); document.getElementById(`game-${type}-pct`).innerText = pct >= 100 ? "🏅 META ATINGIDA!" : `${pct}%`;
+        
+        // Alteração aplicada aqui!
+        document.getElementById(`game-${type}-curr`).innerText = current.toLocaleString('pt-BR', {maximumFractionDigits: 2}); document.getElementById(`game-${type}-target`).innerText = target.toLocaleString('pt-BR'); 
+        
+        document.getElementById(`game-${type}-pct`).innerText = pct >= 100 ? "🏅 META ATINGIDA!" : `${pct}%`;
     }
 
     function factoryReset() { if(confirm("⚠ AVISO CRÍTICO: Isto irá apagar todo o seu progresso.\nContinuar?")) { localStorage.removeItem('ironmanState'); location.reload(); } }
